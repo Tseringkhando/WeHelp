@@ -1,0 +1,89 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+repositories {
+    maven {
+        url "https://dl.bintray.com/ibm-cloud-sdks/ibm-cloud-sdk-repo"
+    }
+}
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+    defaultConfig {
+        applicationId "com.example.wehelp"
+        minSdkVersion 22
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.navigation:navigation-fragment:2.2.1'
+    implementation 'androidx.navigation:navigation-ui:2.2.1'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'com.google.firebase:firebase-auth:19.3.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'com.google.firebase:firebase-firestore:21.4.2'
+    implementation 'com.google.firebase:firebase-functions:19.0.2'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    // FirebaseUI for Firebase Realtime Database
+    implementation 'com.firebaseui:firebase-ui-database:6.2.1'
+
+    // FirebaseUI for Cloud Firestore
+    implementation 'com.firebaseui:firebase-ui-firestore:6.2.1'
+
+    // FirebaseUI for Firebase Auth
+    implementation 'com.firebaseui:firebase-ui-auth:6.2.1'
+
+    // FirebaseUI for Cloud Storage
+    implementation 'com.firebaseui:firebase-ui-storage:6.2.1'
+
+    //crop image and upload
+    //from:https://github.com/ArthurHub/Android-Image-Cropper
+    api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+
+    //material datepicker
+    implementation 'com.google.android.material:material:1.2.0-alpha06'
+
+    //maps
+    implementation 'com.google.maps.android:android-maps-utils:1.3.3'
+
+
+    //view image
+    //from: https://github.com/bumptech/glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    //picasso
+    implementation 'com.squareup.picasso:picasso:2.5.2'
+
+    //material search
+    //from: https://github.com/MiguelCatalan/MaterialSearchView
+    implementation 'com.miguelcatalan:materialsearchview:1.0.0'
+
+    //IBM WATSON
+    implementation 'com.ibm.watson:assistant:8.1.0'
+    implementation 'com.ibm.watson:text-to-speech:8.1.0'
+    implementation 'com.ibm.watson:speech-to-text:8.1.0'
+    implementation 'com.ibm.watson.developer_cloud:android-sdk:0.5.0'
+    implementation 'com.google.android.gms:play-services:10.0.1'
+    implementation 'com.android.support:multidex:1.0.1'
+}

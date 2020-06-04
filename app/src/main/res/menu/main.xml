@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/app_bar_search"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="Search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="always" />
+<!--    <item-->
+<!--        android:id="@+id/action_search"-->
+<!--        android:icon="@drawable/ic_action_action_search"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="@string/abc_search_hint"-->
+<!--        app:showAsAction="always" />-->
+
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="Account settings"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_login"
+        android:title="@string/action_sign_in_short" />
+    <item
+        android:id="@+id/action_signout"
+
+        android:title="Sign out" />
+    <item
+        android:id="@+id/action_register"
+        android:title="@string/action_register" />
+
+
+
+</menu>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="newpost.NewPost">
+
+    <ImageView
+        android:id="@+id/uploadedImageView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:cropToPadding="false"
+        android:adjustViewBounds="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageButton"
+        app:srcCompat="@drawable/button_effect" />
+
+    <Button
+        android:id="@+id/btn_post"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/button_effect"
+        android:text="Post"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/imageButton"
+        android:layout_width="103dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@android:color/background_light"
+        android:scaleType="fitStart"
+        android:text="Photo"
+        android:textAllCaps="false"
+        android:textColor="#AAAAAA"
+        app:cornerRadius="20dp"
+        app:iconTint="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.038"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/post_description"
+        app:strokeColor="#AAAAAA"
+        app:strokeWidth="1dp" />
+
+    <EditText
+        android:id="@+id/post_description"
+        android:layout_width="0dp"
+        android:layout_height="114dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:background="#FFFFFF"
+        android:ems="10"
+        android:gravity="top"
+        android:hint="Description"
+        android:inputType="text|textMultiLine"
+        android:outlineSpotShadowColor="#fff"
+        android:selectAllOnFocus="false"
+        android:singleLine="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/category_dropdown" />
+
+    <Spinner
+        android:id="@+id/category_dropdown"
+        android:layout_width="wrap_content"
+        android:layout_height="23dp"
+
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:fadingEdgeLength="@dimen/fab_margin"
+        android:spinnerMode="dropdown"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user_image_view" />
+
+    <TextView
+        android:id="@+id/usernameView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="24dp"
+        android:text="username"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/user_image_view"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_image_view"
+        android:layout_width="65dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "622864408952",
+    "firebase_url": "https://wehelp-a130c.firebaseio.com",
+    "project_id": "wehelp-a130c",
+    "storage_bucket": "wehelp-a130c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622864408952:android:63bc5817e14e81e21da88d",
+        "android_client_info": {
+          "package_name": "com.example.wehelp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "622864408952-u2o6hahqjem9qpr4f5753b43jh3fqqlu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMp43wAV3olL7B4PlQvkp21VdFG5x9eqo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "622864408952-u2o6hahqjem9qpr4f5753b43jh3fqqlu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
