@@ -22,7 +22,10 @@
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".search.Search_res_single"></activity>
+        <activity android:name=".Admin_users_list_adapter"></activity>
+        <activity android:name=".admin_user_lists_adapter" />
+        <activity android:name=".admin.AdminDashboard" />
+        <activity android:name=".search.Search_res_single" />
         <activity
             android:name=".search.SearchList"
             android:theme="@style/AppTheme.NoActionBar">
@@ -54,7 +57,6 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".User_profile" />
-        <activity android:name=".admin.dashboard" />
         <activity android:name=".categories.Category_post" />
         <activity android:name="newpost.NewPost" />
         <activity android:name=".Posts_list" />

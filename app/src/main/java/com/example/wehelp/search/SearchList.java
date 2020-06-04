@@ -10,22 +10,17 @@ import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.MergeAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.wehelp.R;
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.example.wehelp.categories.Categorylist_model;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -37,8 +32,10 @@ public class SearchList extends AppCompatActivity {
     private RecyclerView search_res_adapter;
     private FirebaseFirestore firestore =FirebaseFirestore.getInstance();
     CollectionReference usersdb= firestore.collection("users");
+    CollectionReference catdb= firestore.collection("categories");
 
     private UserSearchAdapter adapter,adapter2;
+    private CategorySearchAdapter adapter3;
 
 
     private String profile_pic_url;
@@ -60,8 +57,9 @@ public class SearchList extends AppCompatActivity {
     }
     //queries
     private void setUpRecyclerView() {
-         Query search_users_query1= usersdb.orderBy("firstname").startAt(searchText).endAt(searchText+"\uf8ff");
-         Query search_users_query2= firestore.collection("users").whereArrayContains("lastname", searchText);
+         Query search_users_query1= usersdb.orderBy("firstname").startAt("[a-zA-Z0-9]*" ).endAt(searchText+"\uf8ff");
+         Query search_users_query2= usersdb.orderBy("lastname").startAt("[a-zA-Z0-9]*").endAt(searchText+"\uf8ff");
+        Query search_users_query3= catdb.orderBy("category").startAt("[a-zA-Z0-9]*").endAt(searchText+"\uf8ff");
 
 
 //        search_users_query1.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -82,20 +80,38 @@ public class SearchList extends AppCompatActivity {
                 .setQuery(search_users_query1, SearchUsersModel.class)
                 .build();
         adapter = new UserSearchAdapter(options);
+
+        FirestoreRecyclerOptions<SearchUsersModel> options2 = new FirestoreRecyclerOptions.Builder<SearchUsersModel>()
+                .setQuery(search_users_query2, SearchUsersModel.class)
+                .build();
+        adapter2 = new UserSearchAdapter(options2);
+
+        FirestoreRecyclerOptions<Categorylist_model> options3 = new FirestoreRecyclerOptions.Builder<Categorylist_model>()
+                .setQuery(search_users_query3, Categorylist_model.class)
+                .build();
+        adapter3 = new CategorySearchAdapter(options3);
+
+
         search_res_adapter.setHasFixedSize(true);
         search_res_adapter.setLayoutManager(new LinearLayoutManager(SearchList.this));
-        search_res_adapter.setAdapter(adapter);
+        MergeAdapter mad= new MergeAdapter(adapter,adapter2,adapter3);
+        search_res_adapter.setAdapter(mad);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         adapter.startListening();
+        adapter2.startListening();
+        adapter3.startListening();
+
     }
     @Override
     protected void onStop() {
         super.onStop();
         adapter.stopListening();
+        adapter2.stopListening();
+        adapter3.stopListening();
     }
 
 
@@ -129,7 +145,9 @@ public class SearchList extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 Intent searchIntent = new Intent(SearchList.this, SearchList.class);
                 searchIntent.putExtra("searchText", query);
+                finish();
                 startActivity(searchIntent);
+
                 return false;
             }
 
