@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -248,7 +249,7 @@ public class User_profile extends AppCompatActivity {
         private CircleImageView post_user_image;
         private TextView username, date, category, description;
         private ImageView post_image;
-        private ImageButton btn_deletepost;
+        private Button btn_deletepost;
 
         public PostsViewHolder(@NonNull View itemView) {
             super(itemView);

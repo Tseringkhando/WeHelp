@@ -22,7 +22,11 @@
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Admin_users_list_adapter"></activity>
+        <activity android:name=".admin.Admin_category_single_view"></activity>
+        <activity android:name=".admin.Admin_category_lists" />
+        <activity android:name=".admin.Admin_post_detail_single" />
+        <activity android:name=".admin.Admin_user_detail_single" />
+        <activity android:name=".Admin_users_list_adapter" />
         <activity android:name=".admin_user_lists_adapter" />
         <activity android:name=".admin.AdminDashboard" />
         <activity android:name=".search.Search_res_single" />

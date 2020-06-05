@@ -288,7 +288,7 @@ public class HomeFragment extends Fragment {
         private CircleImageView post_user_image;
         private TextView username, date, category, description;
         private ImageView post_image;
-        private ImageButton btn_deletepost;
+        private Button btn_deletepost;
         private Button btn_post_user_contact;
 
 
