@@ -15,13 +15,14 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class Signin extends AppCompatActivity {
 
     private Button loginbtn , register, forgot;
-    private EditText email, password;
+    private TextInputEditText email, password;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
     @Override
@@ -32,8 +33,8 @@ public class Signin extends AppCompatActivity {
 
         mAuth= FirebaseAuth.getInstance();
 
-        email = findViewById(R.id.email);
-        password = findViewById(R.id.password);
+        email = findViewById(R.id.loginemail);
+        password = findViewById(R.id.passwordlogin);
         loginbtn = findViewById(R.id.btn_login);
         register = findViewById(R.id.btn_register);
         progressBar = findViewById(R.id.progressBar);

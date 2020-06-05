@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,7 +37,7 @@ import java.util.TimeZone;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText reg_email, reg_pass, confirm_pass, firstname, lastname;
+    private TextInputEditText reg_email, reg_pass, confirm_pass, firstname, lastname;
     private Button regBtn, loginBtn, btn_reg_dob;
     private Date dob;
     private TextView view_reg_dob;
@@ -50,13 +51,13 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         loginBtn = findViewById(R.id.btn_loginPage);
-        reg_email= findViewById(R.id.email);
-        reg_pass =findViewById(R.id.password);
-        confirm_pass = findViewById(R.id.password2);
+        reg_email= findViewById(R.id.reg_email);
+        reg_pass =findViewById(R.id.reg_password);
+        confirm_pass = findViewById(R.id.reg_confirm_password);
         regBtn=findViewById(R.id.btn_register);
         regProgress = findViewById(R.id.progressBar);
-        firstname=findViewById(R.id.firstname);
-        lastname=findViewById(R.id.lastname);
+        firstname=findViewById(R.id.reg_fname);
+        lastname=findViewById(R.id.reg_lname);
         btn_reg_dob= findViewById(R.id.btn_register_dob);
         view_reg_dob=findViewById(R.id.view_reg_dob);
         mAuth = FirebaseAuth.getInstance();
@@ -176,8 +177,8 @@ public class RegisterActivity extends AppCompatActivity {
     //this inserts the data in the database
     private void createUserinDb(String email_id, String uid)
     {
-        firstname=findViewById(R.id.firstname);
-        lastname=findViewById(R.id.lastname);
+        firstname=findViewById(R.id.reg_fname);
+        lastname=findViewById(R.id.reg_lname);
         String fname= firstname.getText().toString();
         String lname = lastname.getText().toString();
         String type = "user";

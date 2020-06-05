@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 
+import com.example.wehelp.admin.AdminAddNewAdmin;
 import com.example.wehelp.chatbot.ChatBotMessage;
 import com.example.wehelp.search.SearchList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -72,8 +73,10 @@ public class MainActivity extends AppCompatActivity {
 //                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
 //                mapIntent.setPackage("com.google.android.apps.maps");
 //                startActivity(mapIntent);
-                Intent chatbot = new Intent(MainActivity.this, ChatBotMessage.class);
-                startActivity(chatbot);
+//                Intent chatbot = new Intent(MainActivity.this, ChatBotMessage.class);
+//                startActivity(chatbot);
+                Intent openadmin = new Intent(MainActivity.this, AdminAddNewAdmin.class);
+                startActivity(openadmin);
 
             }
         });

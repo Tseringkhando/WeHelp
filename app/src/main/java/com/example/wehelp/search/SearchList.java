@@ -57,24 +57,11 @@ public class SearchList extends AppCompatActivity {
     }
     //queries
     private void setUpRecyclerView() {
-         Query search_users_query1= usersdb.orderBy("firstname").startAt("[a-zA-Z0-9]*" ).endAt(searchText+"\uf8ff");
-         Query search_users_query2= usersdb.orderBy("lastname").startAt("[a-zA-Z0-9]*").endAt(searchText+"\uf8ff");
-        Query search_users_query3= catdb.orderBy("category").startAt("[a-zA-Z0-9]*").endAt(searchText+"\uf8ff");
+         Query search_users_query1= usersdb.orderBy("firstname").startAt(searchText).endAt(searchText+"\uf8ff");
+         Query search_users_query2= usersdb.orderBy("lastname").startAt(searchText).endAt(searchText+"\uf8ff");
+        Query search_users_query3= catdb.orderBy("category").startAt(searchText).endAt(searchText+"\uf8ff");
 
 
-//        search_users_query1.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                if(task.isSuccessful())
-//                {
-//                    for(QueryDocumentSnapshot documentSnapshots:task.getResult())
-//                    {
-//                        System.out.println(documentSnapshots.getString("firstname"));
-//                        search_res_title.setText(documentSnapshots.getString("firstname"));
-//                    }
-//                }
-//            }
-//        });
         //firstname and lastname
         FirestoreRecyclerOptions<SearchUsersModel> options = new FirestoreRecyclerOptions.Builder<SearchUsersModel>()
                 .setQuery(search_users_query1, SearchUsersModel.class)
@@ -95,7 +82,7 @@ public class SearchList extends AppCompatActivity {
         search_res_adapter.setHasFixedSize(true);
         search_res_adapter.setLayoutManager(new LinearLayoutManager(SearchList.this));
         MergeAdapter mad= new MergeAdapter(adapter,adapter2,adapter3);
-        search_res_adapter.setAdapter(mad);
+        search_res_adapter.setAdapter(adapter);
     }
 
     @Override

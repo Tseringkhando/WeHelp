@@ -32,6 +32,8 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -63,7 +65,7 @@ import newpost.NewPost;
 public class SetupAccount extends AppCompatActivity {
     private Button btn_dob, btn_save_account, btn_not_now;
     private TextView view_dob;
-    private EditText contact_no_field, firstname_field, lastname_field;
+    private TextInputEditText contact_no_field, firstname_field, lastname_field;
     private Boolean image_changed = false;
     private CircleImageView profile_image_view;
     private Uri mainImageURI = null;
@@ -88,12 +90,12 @@ public class SetupAccount extends AppCompatActivity {
 
         btn_dob = findViewById(R.id.btn_dob);
         view_dob = findViewById(R.id.view_dob);
-        contact_no_field = findViewById(R.id.contact_number_field);
+        contact_no_field = findViewById(R.id.acc_contact);
         profile_image_view = findViewById(R.id.upload_profile);
         btn_save_account = findViewById(R.id.btn_save_account);
         btn_not_now = findViewById(R.id.btn_not_now);
-        firstname_field = findViewById(R.id.firstname_field);
-        lastname_field = findViewById(R.id.lastname_field);
+        firstname_field = findViewById(R.id.acc_firstname);
+        lastname_field = findViewById(R.id.acc_lastname);
         progressBar=findViewById(R.id.progressBar2);
         firebaseAuth = FirebaseAuth.getInstance();
         user_id = firebaseAuth.getCurrentUser().getUid();

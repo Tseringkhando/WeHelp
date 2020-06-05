@@ -22,7 +22,8 @@
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".admin.Admin_category_single_view"></activity>
+        <activity android:name=".admin.AdminAddNewAdmin"></activity>
+        <activity android:name=".admin.Admin_category_single_view" />
         <activity android:name=".admin.Admin_category_lists" />
         <activity android:name=".admin.Admin_post_detail_single" />
         <activity android:name=".admin.Admin_user_detail_single" />
