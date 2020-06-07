@@ -5,6 +5,8 @@
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F1F1F1"
+    android:backgroundTint="#F1F1F1"
     tools:context=".search.SearchList">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -34,6 +36,8 @@
         android:id="@+id/search_res_adapter"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="#000000"
+        android:backgroundTint="#F1F1F1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />

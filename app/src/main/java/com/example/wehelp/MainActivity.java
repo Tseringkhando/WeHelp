@@ -5,18 +5,22 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 
 import com.example.wehelp.admin.AdminAddNewAdmin;
 import com.example.wehelp.chatbot.ChatBotMessage;
 import com.example.wehelp.search.SearchList;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.view.MenuItem;
 import android.view.View;
 
 
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -24,6 +28,11 @@ import androidx.navigation.ui.*;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
+
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
    // private CircleImageView current_user_image;
     private AppBarConfiguration mAppBarConfiguration;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore firestore;
     private boolean isUserVerified=false;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,15 +54,17 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mAuth= FirebaseAuth.getInstance();
+        firestore=FirebaseFirestore.getInstance();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         View nav = navigationView.getHeaderView(0);
-        CircleImageView current_user_image= nav.findViewById(R.id.current_user_image);
+        final CircleImageView current_user_image= nav.findViewById(R.id.current_user_image);
 
         //check if the user is loggedin or not
         if(mAuth.getCurrentUser()!=null && mAuth.getCurrentUser().isEmailVerified())
             {
                 isUserVerified=true;
+
                 current_user_image.setVisibility(View.VISIBLE);
                 current_user_image.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -60,6 +72,20 @@ public class MainActivity extends AppCompatActivity {
                         Intent myprofile= new Intent(MainActivity.this, User_profile.class);
                         myprofile.putExtra("user_id", "");
                         startActivity(myprofile);
+                    }
+                });
+                firestore.collection("users").whereEqualTo("user_id",mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful())
+                        {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String profile_image = document.getString("profile_image");
+                                Uri profile_image_uri = Uri.parse(profile_image);
+                                Picasso.with(MainActivity.this).load(profile_image_uri).fit().placeholder(R.drawable.default_profile_img)
+                                        .into(current_user_image);
+                            }
+                        }
                     }
                 });
             }
@@ -73,10 +99,11 @@ public class MainActivity extends AppCompatActivity {
 //                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
 //                mapIntent.setPackage("com.google.android.apps.maps");
 //                startActivity(mapIntent);
-//                Intent chatbot = new Intent(MainActivity.this, ChatBotMessage.class);
-//                startActivity(chatbot);
-                Intent openadmin = new Intent(MainActivity.this, AdminAddNewAdmin.class);
-                startActivity(openadmin);
+                Intent chatbot = new Intent(MainActivity.this, ChatBotMessage.class);
+                startActivity(chatbot);
+
+//                Intent maps = new Intent(MainActivity.this, MapsActivity.class);
+//                startActivity(maps);
 
             }
         });

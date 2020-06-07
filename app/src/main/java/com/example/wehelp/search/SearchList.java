@@ -37,26 +37,24 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SearchList extends AppCompatActivity {
-    private List<SearchUsersModel> alluserslists;
+    private List<SearchUsersModel> alluserslists = new ArrayList<>();
 
-    public void setList(List<SearchUsersModel> alluserslists)
-    {
+    public void setList(List<SearchUsersModel> alluserslists) {
         System.out.println("value set ");
         this.alluserslists=alluserslists;
     }
-    public List<SearchUsersModel> getUserArrayList()
-    {
-        return  this.alluserslists;
+
+    public List<SearchUsersModel> getUserArrayList() {
+        return this.alluserslists;
     }
 
-    private String searchText="";
     private TextView search_res_title;
     private CircleImageView search_res_profile_pic;
-    private String result_type= "";
+    private String result_type = "";
     private RecyclerView search_res_adapter;
-    private FirebaseFirestore firestore =FirebaseFirestore.getInstance();
-    CollectionReference usersdb= firestore.collection("users");
-    CollectionReference catdb= firestore.collection("categories");
+    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+    CollectionReference usersdb = firestore.collection("users");
+    CollectionReference catdb = firestore.collection("categories");
 
     private CategorySearchAdapter adapter3;
     private UserListAdapter userAdapter;
@@ -66,19 +64,16 @@ public class SearchList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_list);
-        Toolbar toolbar=findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        alluserslists = new ArrayList<>();
         search_res_title = findViewById(R.id.search_res_title);
-        search_res_profile_pic=findViewById(R.id.search_profile_pic);
-        search_res_adapter=findViewById(R.id.search_res_adapter);
-        fillExampleList();
-
+        search_res_profile_pic = findViewById(R.id.search_profile_pic);
+        search_res_adapter = findViewById(R.id.search_res_adapter);
+        fillUsersDataFromDatabase();
     }
 
     private void setUpRecyclerView() {
         userAdapter = new UserListAdapter(getUserArrayList());
-
         search_res_adapter.setHasFixedSize(true);
         search_res_adapter.setLayoutManager(new LinearLayoutManager(SearchList.this));
         search_res_adapter.setAdapter(userAdapter);
@@ -90,6 +85,7 @@ public class SearchList extends AppCompatActivity {
 
 
     }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -129,14 +125,13 @@ public class SearchList extends AppCompatActivity {
         return true;
     }
 
-    public void fillExampleList() {
-
-        Query  q= firestore.collection("users");
+    // method to list all the users from database into the arraylist
+    public void fillUsersDataFromDatabase() {
+        Query q = firestore.collection("users");
         q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         String firstname = document.getString("firstname");
                         String lastname = document.getString("lastname");
@@ -145,9 +140,9 @@ public class SearchList extends AppCompatActivity {
                         Timestamp dob = document.getTimestamp("dob");
                         String contact = document.getString("contact");
                         Timestamp datejoined = document.getTimestamp("datejoined");
-                        String email= document.getString("email");
+                        String email = document.getString("email");
                         Boolean isAdmin = document.getBoolean("isAdmin");
-                        alluserslists.add( new SearchUsersModel(uid, firstname, lastname, photo_url,contact, email,isAdmin,dob,datejoined));
+                        alluserslists.add(new SearchUsersModel(uid, firstname, lastname, photo_url, contact, email, isAdmin, dob, datejoined));
                     }
                     setList(alluserslists);
                     setUpRecyclerView();
@@ -158,16 +153,16 @@ public class SearchList extends AppCompatActivity {
         });
 
 
-
     }
 
 
-//getter setter
+    //getter setter
     public String getProfile_pic_url() {
-    return profile_pic_url;
-}
-    public void setProfile_pic_url(String profile_pic_url)
-    {
+        return profile_pic_url;
+    }
+
+    public void setProfile_pic_url(String profile_pic_url) {
         this.profile_pic_url = profile_pic_url;
     }
+
 }

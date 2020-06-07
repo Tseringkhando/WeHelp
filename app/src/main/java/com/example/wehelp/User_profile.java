@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -47,7 +48,7 @@ public class User_profile extends AppCompatActivity {
     private String user_id="";
 
     //    widgets
-    private ImageButton btn_edit_profile;
+    private Button btn_edit_profile;
     private CircleImageView profile_image_view;
     private Uri mainImageURI = null;
     private TextView profile_username, profile_email, profile_contact, profile_address;
@@ -80,32 +81,32 @@ public class User_profile extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
-        btn_edit_profile = findViewById(R.id.btn_profile_edit);
         profile_username = findViewById(R.id.profile_username);
         profile_email = findViewById(R.id.profile_email);
         profile_contact = findViewById(R.id.profile_contact);
         profile_image_view = findViewById(R.id.img_user_profile);
         posts_recycler = findViewById(R.id.profile_posts_lists);
+        btn_edit_profile=findViewById(R.id.btn_profile_edit);
         //
         btn_edit_profile.setVisibility(View.GONE);
         user_id=getIntent().getStringExtra("user_id");
         if (user_id.isEmpty() && !mAuth.getCurrentUser().getUid().isEmpty()) {
             user_id = mAuth.getCurrentUser().getUid();
-
         }
-
-        if(user_id.length()>0 && mAuth.getCurrentUser()!=null)
+        if(mAuth.getCurrentUser()!=null)
         {
             if(user_id.equals(mAuth.getCurrentUser().getUid()))
             {
                 btn_edit_profile.setVisibility(View.VISIBLE);
+                btn_edit_profile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent editprofile = new Intent(User_profile.this, SetupAccount.class);
+                        startActivity(editprofile);
+                    }
+                });
             }
         }
-
-
-
-
-
         //query to view user details
         db.collection("users").whereEqualTo("user_id", user_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -215,6 +216,8 @@ public class User_profile extends AppCompatActivity {
                                 alert.show();
                             }
                         });
+
+
                     }
                 }
 

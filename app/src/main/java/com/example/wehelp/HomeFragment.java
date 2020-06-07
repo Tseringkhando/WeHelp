@@ -86,15 +86,15 @@ public class HomeFragment extends Fragment {
         //MAKING THE POST OPTION AVAILABLE TO THE LOGGED IN USERS ONLY
         if(mAuth.getCurrentUser()!=null && mAuth.getCurrentUser().isEmailVerified()){
             current_user_image.setVisibility(View.VISIBLE);
-            edit_post.setVisibility(View.VISIBLE);
-
-            edit_post.setOnClickListener(new View.OnClickListener() {
+            current_user_image.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent i = new Intent(getContext(), NewPost.class);
-                    startActivity(i);
+                    Intent myprofile= new Intent(getContext(), User_profile.class);
+                    myprofile.putExtra("user_id", "");
+                    startActivity(myprofile);
                 }
             });
+
             firestore.collection("users").whereEqualTo("user_id",mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -107,6 +107,17 @@ public class HomeFragment extends Fragment {
                                     .into(current_user_image);
                         }
                     }
+                }
+            });
+
+            //edti post
+            edit_post.setVisibility(View.VISIBLE);
+
+            edit_post.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(getContext(), NewPost.class);
+                    startActivity(i);
                 }
             });
         }
@@ -177,7 +188,7 @@ public class HomeFragment extends Fragment {
                     }
                 } , uid);
                 //open user profile when the user's profile picture and name are clicked
-                holder.post_image.setOnClickListener(new View.OnClickListener() {
+                holder.post_user_image.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         openUserProfile(uid);
