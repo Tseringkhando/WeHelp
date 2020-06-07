@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.EditorInfo;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,13 +20,35 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.wehelp.R;
 import com.example.wehelp.categories.Categorylist_model;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SearchList extends AppCompatActivity {
+    private List<SearchUsersModel> alluserslists;
+
+    public void setList(List<SearchUsersModel> alluserslists)
+    {
+        System.out.println("value set ");
+        this.alluserslists=alluserslists;
+    }
+    public List<SearchUsersModel> getUserArrayList()
+    {
+        return  this.alluserslists;
+    }
+
     private String searchText="";
     private TextView search_res_title;
     private CircleImageView search_res_profile_pic;
@@ -34,10 +58,8 @@ public class SearchList extends AppCompatActivity {
     CollectionReference usersdb= firestore.collection("users");
     CollectionReference catdb= firestore.collection("categories");
 
-    private UserSearchAdapter adapter,adapter2;
     private CategorySearchAdapter adapter3;
-
-
+    private UserListAdapter userAdapter;
     private String profile_pic_url;
 
     @Override
@@ -46,101 +68,60 @@ public class SearchList extends AppCompatActivity {
         setContentView(R.layout.activity_search_list);
         Toolbar toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //got user search query
-        searchText=getIntent().getStringExtra("searchText");
+        alluserslists = new ArrayList<>();
         search_res_title = findViewById(R.id.search_res_title);
         search_res_profile_pic=findViewById(R.id.search_profile_pic);
         search_res_adapter=findViewById(R.id.search_res_adapter);
+        fillExampleList();
 
-        //tutorial from: https://codinginflow.com/tutorials/android/firebaseui-firestorerecycleradapter/part-3-firestorerecycleradapter
-        setUpRecyclerView();
     }
-    //queries
+
     private void setUpRecyclerView() {
-         Query search_users_query1= usersdb.orderBy("firstname").startAt(searchText).endAt(searchText+"\uf8ff");
-         Query search_users_query2= usersdb.orderBy("lastname").startAt(searchText).endAt(searchText+"\uf8ff");
-        Query search_users_query3= catdb.orderBy("category").startAt(searchText).endAt(searchText+"\uf8ff");
-
-
-        //firstname and lastname
-        FirestoreRecyclerOptions<SearchUsersModel> options = new FirestoreRecyclerOptions.Builder<SearchUsersModel>()
-                .setQuery(search_users_query1, SearchUsersModel.class)
-                .build();
-        adapter = new UserSearchAdapter(options);
-
-        FirestoreRecyclerOptions<SearchUsersModel> options2 = new FirestoreRecyclerOptions.Builder<SearchUsersModel>()
-                .setQuery(search_users_query2, SearchUsersModel.class)
-                .build();
-        adapter2 = new UserSearchAdapter(options2);
-
-        FirestoreRecyclerOptions<Categorylist_model> options3 = new FirestoreRecyclerOptions.Builder<Categorylist_model>()
-                .setQuery(search_users_query3, Categorylist_model.class)
-                .build();
-        adapter3 = new CategorySearchAdapter(options3);
-
+        userAdapter = new UserListAdapter(getUserArrayList());
 
         search_res_adapter.setHasFixedSize(true);
         search_res_adapter.setLayoutManager(new LinearLayoutManager(SearchList.this));
-        MergeAdapter mad= new MergeAdapter(adapter,adapter2,adapter3);
-        search_res_adapter.setAdapter(adapter);
+        search_res_adapter.setAdapter(userAdapter);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        adapter.startListening();
-        adapter2.startListening();
-        adapter3.startListening();
+
 
     }
     @Override
     protected void onStop() {
         super.onStop();
-        adapter.stopListening();
-        adapter2.stopListening();
-        adapter3.stopListening();
+
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        MenuItem item3 = menu.findItem(R.id.app_bar_search);
+        getMenuInflater().inflate(R.menu.searchbar, menu);
+        MenuItem item3 = menu.findItem(R.id.searchbar);
+        SearchView searchView1 = (SearchView) menu.findItem(R.id.searchbar).getActionView();
+        searchView1.setIconifiedByDefault(true);
+        searchView1.setFocusable(true);
+        searchView1.setIconified(false);
+        searchView1.requestFocusFromTouch();
         item3.setVisible(true);
-        MenuItem item = menu.findItem(R.id.action_login);
-        item.setVisible(false);
 
-        MenuItem item2 = menu.findItem(R.id.action_register);
-        item2.setVisible(false);
-
-        MenuItem setting = menu.findItem(R.id.action_settings);
-        setting.setVisible(false);
-
-        MenuItem logout = menu.findItem(R.id.action_signout);
-        logout.setVisible(false);
-
-//
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
-        // searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        SearchView searchView = (SearchView) item3.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
         searchView.setQueryHint(getResources().getString(R.string.search_hint));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Intent searchIntent = new Intent(SearchList.this, SearchList.class);
-                searchIntent.putExtra("searchText", query);
-                finish();
-                startActivity(searchIntent);
-
+                userAdapter.getFilter().filter(query);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
+                userAdapter.getFilter().filter(newText);
                 return false;
             }
         });
@@ -148,6 +129,37 @@ public class SearchList extends AppCompatActivity {
         return true;
     }
 
+    public void fillExampleList() {
+
+        Query  q= firestore.collection("users");
+        q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String firstname = document.getString("firstname");
+                        String lastname = document.getString("lastname");
+                        String uid = document.getString("user_id");
+                        String photo_url = document.getString("profile_image");
+                        Timestamp dob = document.getTimestamp("dob");
+                        String contact = document.getString("contact");
+                        Timestamp datejoined = document.getTimestamp("datejoined");
+                        String email= document.getString("email");
+                        Boolean isAdmin = document.getBoolean("isAdmin");
+                        alluserslists.add( new SearchUsersModel(uid, firstname, lastname, photo_url,contact, email,isAdmin,dob,datejoined));
+                    }
+                    setList(alluserslists);
+                    setUpRecyclerView();
+                } else {
+                    System.out.println("Data not found.");
+                }
+            }
+        });
+
+
+
+    }
 
 
 //getter setter

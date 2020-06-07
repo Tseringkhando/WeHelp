@@ -100,28 +100,6 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem item3 = menu.findItem(R.id.app_bar_search);
         item3.setVisible(true);
-        SearchManager searchManager =
-                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
-                (SearchView) menu.findItem(R.id.app_bar_search).getActionView();
-       // searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-        searchView.setQueryHint(getResources().getString(R.string.search_hint));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                Intent searchIntent = new Intent(MainActivity.this, SearchList.class);
-                searchIntent.putExtra("searchText", query);
-                startActivity(searchIntent);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-
-                return false;
-            }
-        });
-
 
         if(isUserVerified==true)
         {
@@ -187,6 +165,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_register:
                 register();
                 return true;
+
+            case R.id.app_bar_search:
+                Intent searchIntent = new Intent(MainActivity.this, SearchList.class);
+                startActivity(searchIntent);
+                return  true;
 
             default:
                 return false;

@@ -89,16 +89,22 @@ public class User_profile extends AppCompatActivity {
         //
         btn_edit_profile.setVisibility(View.GONE);
         user_id=getIntent().getStringExtra("user_id");
-        if (user_id.isEmpty()) {
+        if (user_id.isEmpty() && !mAuth.getCurrentUser().getUid().isEmpty()) {
             user_id = mAuth.getCurrentUser().getUid();
-        } else {
 
         }
 
-
-        if (user_id.equals(mAuth.getCurrentUser().getUid())) {
-            btn_edit_profile.setVisibility(View.VISIBLE);
+        if(user_id.length()>0 && mAuth.getCurrentUser()!=null)
+        {
+            if(user_id.equals(mAuth.getCurrentUser().getUid()))
+            {
+                btn_edit_profile.setVisibility(View.VISIBLE);
+            }
         }
+
+
+
+
 
         //query to view user details
         db.collection("users").whereEqualTo("user_id", user_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
