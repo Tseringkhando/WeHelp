@@ -151,6 +151,7 @@ public class HomeFragment extends Fragment {
                 final String post_category= model.getCategory();
                 final String post_desc = model.getDescription();
                 holder.btn_deletepost.setVisibility(View.GONE);
+                holder.btn_post_user_contact.setVisibility(View.VISIBLE);
                 //Display date into string format
                 SimpleDateFormat simpleFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
                 Date d= model.getDate_added();
@@ -207,6 +208,7 @@ public class HomeFragment extends Fragment {
                 {
                     if(model.getUser_id().equals(mAuth.getCurrentUser().getUid()))
                     {
+                        holder.btn_post_user_contact.setVisibility(View.GONE);
                         holder.btn_deletepost.setVisibility(View.VISIBLE);
                         holder.btn_deletepost.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -370,8 +372,6 @@ public class HomeFragment extends Fragment {
                 callback.firebaseResponseCallback(getUemail());
             }
         });
-
-        //firestore get username finish
     }
 
     //USER_POST_PROFILE IMAGE

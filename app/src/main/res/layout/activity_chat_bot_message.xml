@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/wallet_hint_foreground_holo_light"
+    android:background="#fff"
     tools:context=".chatbot.ChatBotMessage">
 
     <include layout="@layout/activity_chat_adapter" />

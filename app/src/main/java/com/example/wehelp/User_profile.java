@@ -45,7 +45,7 @@ public class User_profile extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private FirestoreRecyclerAdapter adapter;
-    private String user_id="";
+    private String user_id="", uemail;
 
     //    widgets
     private Button btn_edit_profile;
@@ -155,8 +155,11 @@ public class User_profile extends AppCompatActivity {
             protected void onBindViewHolder(@NonNull final PostsViewHolder holder, int position, @NonNull PostsModel model) {
                 //getting post id
                 final String post_id= getSnapshots().getSnapshot(position).getId();
+                final String post_category= model.getCategory();
+                final String post_desc = model.getDescription();
                 PostsViewHolder holder2=holder;
                 holder.btn_deletepost.setVisibility(View.GONE);
+                holder.btn_post_user_contact.setVisibility(View.VISIBLE);
                 //Display date into string format
                 SimpleDateFormat simpleFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
                 Date d= model.getDate_added();
@@ -173,12 +176,33 @@ public class User_profile extends AppCompatActivity {
                         holder.username.setText(result);
                     }
                 } , uid);
+                getUserEmail(new Callback() {
+                    @Override
+                    public void firebaseResponseCallback(String result) {
+                        final String res =result;
+                        //contact the post user
+                        holder.btn_post_user_contact.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent intent=new Intent(Intent.ACTION_SEND);
+                                String[] recipients={res};
+                                intent.putExtra(Intent.EXTRA_EMAIL, recipients);
+                                intent.putExtra(Intent.EXTRA_SUBJECT,"Replying to : "+post_category+": "+ post_desc);
+                                intent.putExtra(Intent.EXTRA_TEXT,"");
+                                intent.setType("text/html");
+                                intent.setPackage("com.google.android.gm");
+                                startActivity(Intent.createChooser(intent, "Send mail"));
+                            }
+                        });
+                    }
+                } , uid);
 
                 //to show delete button to the current user if their post exists
                 if(mAuth.getCurrentUser()!=null)
                 {
                     if(model.getUser_id().equals(mAuth.getCurrentUser().getUid()))
                     {
+                        holder.btn_post_user_contact.setVisibility(View.GONE);
                         holder.btn_deletepost.setVisibility(View.VISIBLE);
                         holder.btn_deletepost.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -258,7 +282,7 @@ public class User_profile extends AppCompatActivity {
         private CircleImageView post_user_image;
         private TextView username, date, category, description;
         private ImageView post_image;
-        private Button btn_deletepost;
+        private Button btn_deletepost, btn_post_user_contact;
 
         public PostsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -270,6 +294,7 @@ public class User_profile extends AppCompatActivity {
             description=itemView.findViewById(R.id.posted_description);
             post_image=itemView.findViewById(R.id.post_image);
             btn_deletepost=itemView.findViewById(R.id.btn_deletepost);
+            btn_post_user_contact=itemView.findViewById(R.id.btn_post_user_contact);
         }
     }
 
@@ -329,6 +354,34 @@ public class User_profile extends AppCompatActivity {
 
         //firestore get username finish
     }
+
+    public String getUemail() {
+        return uemail;
+    }
+
+    public void setUemail(String uemail) {
+        this.uemail = uemail;
+    }
+
+    ///get post user email
+    public void getUserEmail(final Callback callback, String user_id)
+    {
+        //to get user name
+        db.collection("users").whereEqualTo("user_id",user_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String email= document.getString("email");
+                        setUemail(email);
+                    }
+                }
+                callback.firebaseResponseCallback(getUemail());
+            }
+        });
+    }
+
 }
 
 

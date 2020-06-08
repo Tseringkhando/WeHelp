@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:outlineProvider="background"
     tools:context="newpost.NewPost">
 
     <ImageView
@@ -13,8 +14,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:cropToPadding="false"
         android:adjustViewBounds="true"
+        android:cropToPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageButton"
@@ -35,21 +36,21 @@
 
     <Button
         android:id="@+id/imageButton"
-        android:layout_width="103dp"
-        android:layout_height="41dp"
+        style="@style/Widget.MaterialComponents.Button.Icon"
+        android:layout_width="124dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:backgroundTint="@android:color/background_light"
         android:scaleType="fitStart"
         android:text="Photo"
         android:textAllCaps="false"
-        android:textColor="#AAAAAA"
-        app:cornerRadius="20dp"
-        app:iconTint="#FFFFFF"
+        app:cornerRadius="10dp"
+        app:icon="@drawable/ic_menu_gallery"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.038"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/post_description"
-        app:strokeColor="#AAAAAA"
+        app:strokeColor="@color/colorPrimary"
         app:strokeWidth="1dp" />
 
     <EditText
@@ -59,7 +60,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:background="#FFFFFF"
+        android:background="@drawable/border"
         android:ems="10"
         android:gravity="top"
         android:hint="Description"
@@ -73,9 +74,8 @@
 
     <Spinner
         android:id="@+id/category_dropdown"
-        android:layout_width="wrap_content"
-        android:layout_height="23dp"
-
+        android:layout_width="200dp"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
         android:fadingEdgeLength="@dimen/fab_margin"

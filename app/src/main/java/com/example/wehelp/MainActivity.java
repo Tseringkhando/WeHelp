@@ -11,6 +11,8 @@ import android.os.Bundle;
 
 import com.example.wehelp.admin.AdminAddNewAdmin;
 import com.example.wehelp.chatbot.ChatBotMessage;
+import com.example.wehelp.maps.MapPersmission;
+import com.example.wehelp.maps.MapsActivity;
 import com.example.wehelp.search.SearchList;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -102,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent chatbot = new Intent(MainActivity.this, ChatBotMessage.class);
                 startActivity(chatbot);
 
-//                Intent maps = new Intent(MainActivity.this, MapsActivity.class);
+//
+//                Intent maps = new Intent(MainActivity.this, MapPersmission.class);
 //                startActivity(maps);
 
             }

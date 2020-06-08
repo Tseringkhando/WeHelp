@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -52,11 +53,12 @@ public class Categories extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull CategoryViewHolder holder, int position, @NonNull Categorylist_model model) {
                 final String name= model.getCategory();
+
                 holder.cat_name.setText(model.getCategory());
                 holder.cat_desc.setText(model.getDescription());
                 documentId = getSnapshots().getSnapshot(position).getId();
 
-                holder.cat_name.setOnClickListener(new View.OnClickListener() {
+                holder.cat_card.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getContext(), Category_post.class);
@@ -77,13 +79,13 @@ public class Categories extends Fragment {
     private class CategoryViewHolder extends RecyclerView.ViewHolder {
         //the the widgets in the resource file
          private TextView cat_name, cat_desc;
-
+            private CardView cat_card;
         public CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
 
             cat_name = itemView.findViewById(R.id.category_title);
             cat_desc= itemView.findViewById(R.id.category_subtitle);
-
+            cat_card=itemView.findViewById(R.id.cat_card);
             cat_name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
