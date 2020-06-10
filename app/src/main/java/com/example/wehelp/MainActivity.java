@@ -1,18 +1,14 @@
 package com.example.wehelp;
 
 import android.app.AlertDialog;
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
 
-import com.example.wehelp.admin.AdminAddNewAdmin;
+import com.example.wehelp.admin.AdminDashboard;
 import com.example.wehelp.chatbot.ChatBotMessage;
-import com.example.wehelp.maps.MapPersmission;
-import com.example.wehelp.maps.MapsActivity;
 import com.example.wehelp.search.SearchList;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -40,7 +36,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
-import android.widget.SearchView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -49,14 +44,48 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
-    private boolean isUserVerified=false;
+    private boolean isUserVerified=false, isUserAdmin=false;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mAuth= FirebaseAuth.getInstance();
+        firestore=FirebaseFirestore.getInstance();
+        if(mAuth.getCurrentUser()!=null)
+        {
+            firestore.collection("users").whereEqualTo("user_id",mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if(task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            isUserAdmin=document.getBoolean("isAdmin");
+                        }
+                    }
+                    if(isUserAdmin)
+                    {
+                        startActivity(new Intent(MainActivity.this, AdminDashboard.class));
+                    }
+                    else
+                    {
+                        callLayout();
+                    }
+
+                }
+            });
+        }
+        else
+        {
+            callLayout();
+        }
+
+
+
+    }
+
+    public void callLayout()
+    {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        mAuth= FirebaseAuth.getInstance();
-        firestore=FirebaseFirestore.getInstance();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         View nav = navigationView.getHeaderView(0);
@@ -64,33 +93,34 @@ public class MainActivity extends AppCompatActivity {
 
         //check if the user is loggedin or not
         if(mAuth.getCurrentUser()!=null && mAuth.getCurrentUser().isEmailVerified())
-            {
-                isUserVerified=true;
+        {
+            isUserVerified=true;
 
-                current_user_image.setVisibility(View.VISIBLE);
-                current_user_image.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent myprofile= new Intent(MainActivity.this, User_profile.class);
-                        myprofile.putExtra("user_id", "");
-                        startActivity(myprofile);
-                    }
-                });
-                firestore.collection("users").whereEqualTo("user_id",mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful())
-                        {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                String profile_image = document.getString("profile_image");
-                                Uri profile_image_uri = Uri.parse(profile_image);
-                                Picasso.with(MainActivity.this).load(profile_image_uri).fit().placeholder(R.drawable.default_profile_img)
-                                        .into(current_user_image);
-                            }
+            current_user_image.setVisibility(View.VISIBLE);
+            current_user_image.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent myprofile= new Intent(MainActivity.this, User_profile.class);
+                    myprofile.putExtra("user_id", "");
+                    startActivity(myprofile);
+                }
+            });
+            firestore.collection("users").whereEqualTo("user_id",mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if(task.isSuccessful())
+                    {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String profile_image = document.getString("profile_image");
+                            Uri profile_image_uri = Uri.parse(profile_image);
+                            Picasso.with(MainActivity.this).load(profile_image_uri).fit().placeholder(R.drawable.default_profile_img)
+                                    .into(current_user_image);
                         }
                     }
-                });
-            }
+                }
+            });
+        }
+
 
         //chatbot button
         FloatingActionButton fab = findViewById(R.id.floatingActionButton);
@@ -122,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

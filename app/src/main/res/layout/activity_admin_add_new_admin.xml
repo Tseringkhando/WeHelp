@@ -19,6 +19,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/adminLastname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -36,6 +37,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/adminFirstname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -71,7 +73,7 @@
         app:rippleColor="@color/colorPrimary" />
 
     <TextView
-        android:id="@+id/textView21"
+        android:id="@+id/adminDobText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -81,7 +83,7 @@
         app:layout_constraintTop_toBottomOf="@+id/passwordfield" />
 
     <RadioGroup
-        android:id="@+id/radioGroupGender"
+        android:id="@+id/adminGenderGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -94,6 +96,7 @@
             android:id="@+id/radio_male"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:checked="true"
             android:text="Male" />
         <RadioButton
             android:id="@+id/radio_female"
@@ -119,15 +122,16 @@
         android:hint="Contact no."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroupGender">
+        app:layout_constraintTop_toBottomOf="@+id/adminGenderGroup">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/adminContact"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/adminEmail"
+        android:id="@+id/adminemail"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="63dp"
@@ -140,6 +144,7 @@
         app:layout_constraintTop_toBottomOf="@+id/admincontact">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/adminEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -164,6 +169,7 @@
         android:layout_height="63dp"
         android:layout_marginStart="16dp"
         android:hint="Create Password"
+        android:inputType="textPassword"
         app:errorEnabled="true"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_marginTop="16dp"
@@ -171,10 +177,11 @@
         app:endIconMode="password_toggle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/adminEmail">
+        app:layout_constraintTop_toBottomOf="@+id/adminemail">
 
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/adminPw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword" />

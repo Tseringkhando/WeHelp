@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="?attr/actionBarSize"
-    tools:context=".admin.Admin_category_lists">
+    tools:context=".admin.AdminCategories">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textField"

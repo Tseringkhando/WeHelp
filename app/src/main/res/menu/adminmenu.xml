@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_dashboard"
+            android:icon="@drawable/ic_action_name"
+            android:title="Dashboard" />
+        <item
+            android:id="@+id/nav_admin_categories"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Categories" />
+        <item
+            android:id="@+id/nav_admins"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Admins" />
+        <item
+            android:id="@+id/nav_users"
+            android:icon="@drawable/ic_users"
+            android:title="Users" />
+
+        <item
+            android:id="@+id/nav_add_admin"
+            android:icon="@drawable/ic_menu_share"
+            android:title="Add Admin" />
+
+    </group>
+</menu>

@@ -108,6 +108,7 @@ public class Signin extends AppCompatActivity {
 //    create the open new page after logging in
     public void openUserMain(){
         Intent mainpage = new Intent(Signin.this, MainActivity.class);
+        finish();
         startActivity(mainpage);
         finish();
     }
@@ -116,5 +117,13 @@ public class Signin extends AppCompatActivity {
     {
         ShowDialogBox dialog = new ShowDialogBox("Verify your email first.");
         dialog.show(getSupportFragmentManager(), "Login failed");
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent mainpage = new Intent(Signin.this, MainActivity.class);
+        finish();
+        startActivity(mainpage);
+        super.onBackPressed();
     }
 }
