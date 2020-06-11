@@ -26,12 +26,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AdminDashboard extends AppCompatActivity {
-    private TextView adminusername;
-    private CircleImageView adminProfilePicture;
-    private Button btnSignOut;
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
-    private CardView card_users;
     private AppBarConfiguration mAppBarConfiguration;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +48,6 @@ public class AdminDashboard extends AppCompatActivity {
                     R.id.nav_dashboard, R.id.nav_admin_categories,R.id.nav_users,R.id.nav_admins,R.id.nav_profile)
                     .setDrawerLayout(drawer)
                     .build();
-
 
 
             NavController navController = Navigation.findNavController(AdminDashboard.this, R.id.admin_fragment);

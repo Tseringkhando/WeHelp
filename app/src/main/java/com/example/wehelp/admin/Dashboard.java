@@ -2,8 +2,10 @@ package com.example.wehelp.admin;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -17,8 +19,14 @@ import android.widget.TextView;
 
 import com.example.wehelp.R;
 import com.example.wehelp.Signin;
+import com.example.wehelp.User_profile;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -37,6 +45,7 @@ public class Dashboard extends Fragment{
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private String currentAdminId="";
     private TextView adminusername;
     private CircleImageView adminProfilePicture;
     private Button btnSignOut;
@@ -62,6 +71,7 @@ public class Dashboard extends Fragment{
                              Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.fragment_dashboard, container, false);
         mAuth= FirebaseAuth.getInstance();
+        currentAdminId=mAuth.getCurrentUser().getUid();
         firestore=FirebaseFirestore.getInstance();
         adminusername=view.findViewById(R.id.admin_username);
         adminProfilePicture=view.findViewById(R.id.adminImage);
@@ -71,6 +81,8 @@ public class Dashboard extends Fragment{
         card_addAdmin=view.findViewById(R.id.card_addAdmin);
         card_addCat=view.findViewById(R.id.card_addCat);
         card_posts=view.findViewById(R.id.card_posts);
+
+//        card functionalities
         card_users.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,7 +103,8 @@ public class Dashboard extends Fragment{
             }
         });
 
-                btnSignOut=view.findViewById(R.id.btn_admin_signout);
+//        sign out button
+        btnSignOut=view.findViewById(R.id.btn_admin_signout);
         btnSignOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,6 +128,43 @@ public class Dashboard extends Fragment{
                 alert.show();
             }
         });
+
+
+        //admin name and photo
+        //MAKING THE POST OPTION AVAILABLE TO THE LOGGED IN USERS ONLY
+        if(mAuth.getCurrentUser()!=null && mAuth.getCurrentUser().isEmailVerified()) {
+
+            adminProfilePicture.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    Intent myprofile= new Intent(getContext(), User_profile.class);
+//                    myprofile.putExtra("user_id", "");
+//                    startActivity(myprofile);
+                }
+            });
+
+            firestore.collection("users").whereEqualTo("user_id", currentAdminId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String profile_image = document.getString("profile_image");
+                            Uri profile_image_uri = Uri.parse(profile_image);
+                            Picasso.with(getContext()).load(profile_image_uri).fit().placeholder(R.drawable.default_profile_img)
+                                    .into(adminProfilePicture);
+                            String fname = document.getString("firstname");
+                            String lname = document.getString("lastname");
+                            String fullname = fname + " " + lname;
+                            adminusername.setText(fullname);
+                        }
+                    }
+                }
+            });
+        }
+
+
+
+
         // Inflate the layout for this fragment
         return view;
     }
