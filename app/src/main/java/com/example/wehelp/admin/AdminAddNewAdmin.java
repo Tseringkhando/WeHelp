@@ -26,6 +26,7 @@ import com.example.wehelp.RegisterActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -55,7 +56,7 @@ public class AdminAddNewAdmin extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_admin_add_new_admin,container,false);
+       final View v = inflater.inflate(R.layout.activity_admin_add_new_admin,container,false);
         //instantiate
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -67,6 +68,14 @@ public class AdminAddNewAdmin extends Fragment {
         adminGender= v.findViewById(R.id.adminGenderGroup);
         genderId=adminGender.getCheckedRadioButtonId();
         genderVal=(RadioButton)v.findViewById(genderId);
+        adminGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                genderId=adminGender.getCheckedRadioButtonId();
+                genderVal=(RadioButton)v.findViewById(genderId);
+            }
+        });
+
         btnAdminGender=(RadioButton)v.findViewById(genderId);
         adminDob=v.findViewById(R.id.btn_register_admin_dob);
         saveAdmin=v.findViewById(R.id.btn_save_admin);
@@ -108,6 +117,7 @@ public class AdminAddNewAdmin extends Fragment {
         saveAdmin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 final String  emailid= adminEmail.getText().toString();
                 String pass = adminPassword.getText().toString();
                 String fname= adminFname.getText().toString();
@@ -117,17 +127,17 @@ public class AdminAddNewAdmin extends Fragment {
                         if (calculateAge(getDob().getTime()) < 18) {
                             Toast.makeText(getContext(), "ERROR: User must be 18+", Toast.LENGTH_LONG).show();
                         } else {
-                            regProgress.setVisibility(View.VISIBLE);
                             mAuth.createUserWithEmailAndPassword(emailid, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-                                        FirebaseUser user = mAuth.getCurrentUser();
+                                       AuthResult cred= task.getResult();
+                                        final FirebaseUser user = cred.getUser();
                                         user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if (task.isSuccessful()) {
-                                                    createUserinDb(emailid, mAuth.getCurrentUser().getUid());
+                                                    createUserinDb(emailid, user.getUid());
                                                 } else {
                                                     Toast.makeText(getContext(), "Invalid email address", Toast.LENGTH_LONG).show();
                                                 }
@@ -137,7 +147,6 @@ public class AdminAddNewAdmin extends Fragment {
                                         String errorMessage = task.getException().getMessage();
                                         Toast.makeText(getContext(), "Error : " + errorMessage, Toast.LENGTH_LONG).show();
                                     }
-                                    regProgress.setVisibility(View.INVISIBLE);
                                 }
                             });
                         }
@@ -200,6 +209,7 @@ public class AdminAddNewAdmin extends Fragment {
 
         String fname= adminFname.getText().toString();
         String lname = adminLname.getText().toString();
+        String contact =adminContact.getText().toString();
         Date dob=getDob();
 
         // Create a new user with a first and last name
@@ -210,8 +220,8 @@ public class AdminAddNewAdmin extends Fragment {
         user.put("email", email_id);
         user.put("user_id",uid);
         user.put("dob",dob);
-        user.put("contact","");
-        user.put("gender",genderVal.getText());
+        user.put("contact",contact);
+        user.put("gender",genderVal.getText().toString());
         user.put("profile_image","");
         user.put("datejoined", FieldValue.serverTimestamp());
 
@@ -223,13 +233,10 @@ public class AdminAddNewAdmin extends Fragment {
                     public void onComplete(@NonNull Task<DocumentReference> task) {
                         if(task.isSuccessful())
                         {
-//                            openDialog();
-
-                            regProgress.setVisibility(View.INVISIBLE);
+                            Toast.makeText(getContext(), "User Added", Toast.LENGTH_LONG).show();
                         }
                         else
                         {
-                            regProgress.setVisibility(View.VISIBLE);
                         }
                     }
                 });

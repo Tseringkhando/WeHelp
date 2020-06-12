@@ -161,9 +161,7 @@ public class RegisterActivity extends AppCompatActivity {
         lastname=findViewById(R.id.reg_lname);
         String fname= firstname.getText().toString();
         String lname = lastname.getText().toString();
-        String type = "user";
         Date dob=getDob();
-        Boolean  verified = true;
 
         // Create a new user with a first and last name
         Map<String, Object> user = new HashMap<>();

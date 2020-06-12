@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +23,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -30,16 +34,18 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class Admin_user_detail_single extends AppCompatActivity {
     private TextView fname,lname, email, contact, gender, datejoined,dob;
     private ImageView profileimage_view;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private String user_id="";
+    private String user_id="",accountId;
     private Uri mainImageURI = null;
-    private Button btnDel,btnViewPosts;
+    private Button btnDel,btnViewPosts,btnAddAdmin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +61,7 @@ public class Admin_user_detail_single extends AppCompatActivity {
         contact=findViewById(R.id.contact_view);
         profileimage_view=findViewById(R.id.profileimage_view);
         btnDel=findViewById(R.id.btn_delete_user);
+        btnAddAdmin=findViewById(R.id.btnAddAsAdmin);
         btnViewPosts=findViewById(R.id.btn_view_userposts);
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -65,7 +72,7 @@ public class Admin_user_detail_single extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        //setAccount_id(document.getId());
+                        setAccountId(document.getId());
                         fname.setText(document.getString("firstname"));
                         lname.setText(document.getString("lastname"));
                         contact.setText(document.getString("contact"));
@@ -87,6 +94,53 @@ public class Admin_user_detail_single extends AppCompatActivity {
                             Picasso.with(Admin_user_detail_single.this).load(mainImageURI).fit()
                                     .placeholder(R.drawable.default_profile_img)
                                     .into(profileimage_view);
+                        }
+
+                        if(document.getBoolean("isAdmin")){
+                            btnAddAdmin.setText("Remove Admin");
+                            btnAddAdmin.setTextSize(14);
+                            btnAddAdmin.setTextColor(Color.parseColor("#F44336"));
+                            btnAddAdmin.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    final  Map<String, Object> user = new HashMap<>();
+                                    user.put("isAdmin", false);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(Admin_user_detail_single.this);
+                                    builder.setTitle(R.string.app_name);
+                                    builder.setIcon(R.drawable.ic_launcher);
+                                    builder.setMessage("Are you sure to remove Admin?")
+                                            .setCancelable(false)
+                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    db.collection("users").document(getAccountId())
+                                                            .update(user)
+                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    Toast.makeText(Admin_user_detail_single.this,user_id,Toast.LENGTH_LONG).show();
+                                                                }
+                                                            }).addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+
+                                                        }
+                                                    });
+
+                                                }
+                                            })
+                                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    dialog.cancel();
+                                                }
+                                            });
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            btnAddAdmin.setEnabled(true);
                         }
 
 
@@ -138,7 +192,63 @@ public class Admin_user_detail_single extends AppCompatActivity {
         });
 
         //view user's posts
+        btnViewPosts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent viewposts= new Intent(Admin_user_detail_single.this, AdminUserPosts.class);
+                viewposts.putExtra("userid",user_id);
+                startActivity(viewposts);
+
+            }
+        });
+        //set user as admin
+        btnAddAdmin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final  Map<String, Object> user = new HashMap<>();
+                user.put("isAdmin", true);
+                AlertDialog.Builder builder = new AlertDialog.Builder(Admin_user_detail_single.this);
+                builder.setTitle(R.string.app_name);
+                builder.setIcon(R.drawable.ic_launcher);
+                builder.setMessage("Are you sure to add user as Admin?")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                db.collection("users").document(getAccountId())
+                                        .update(user)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Toast.makeText(Admin_user_detail_single.this,user_id,Toast.LENGTH_LONG).show();
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+
+                                    }
+                                });
+
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
 
 
+            }
+        });
+
+    }
+
+    public String getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 }

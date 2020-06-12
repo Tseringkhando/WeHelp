@@ -118,16 +118,17 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
         });
     }
 
+    @Override
+    public int getItemCount() {
+        return userlist.size();
+    }
+
     private void openUserProfile(String userid) {
         Intent userProfile= new Intent(context, Admin_user_detail_single.class);
         userProfile.putExtra("user_id", userid);
         context.startActivity(userProfile);
     }
 
-    @Override
-    public int getItemCount() {
-        return userlist.size();
-    }
     @Override
     public Filter getFilter() {
         return userFilter;

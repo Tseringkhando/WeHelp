@@ -9,16 +9,16 @@
 
     <Button
         android:id="@+id/btn_delete_user"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/arimo_bold"
         android:text="Delete user"
         android:textAllCaps="false"
         android:textColor="#F44336"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:typeface="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -230,17 +230,31 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <Button
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:textAllCaps="false"
         android:id="@+id/btn_view_userposts"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="36dp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="68dp"
         android:fontFamily="@font/arimo_bold"
         android:text="View posts"
+        android:textAllCaps="false"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="20sp"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileimage_view" />
+
+    <Button
+        android:id="@+id/btnAddAsAdmin"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="157dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="68dp"
+        android:layout_marginEnd="24dp"
+        android:text="Make Admin"
+        android:textAllCaps="false"
+        android:textColor="@color/quantum_googgreen800"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileimage_view" />
 

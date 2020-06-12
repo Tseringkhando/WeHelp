@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="?attr/actionBarSize"
     tools:context=".admin.Admin_post_detail_single">
 
-    <TextView
+    <Button
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:textAllCaps="false"
         android:id="@+id/btn_delete_post_byadmin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -167,7 +168,7 @@
     <ImageView
         android:id="@+id/post_image_admin"
         android:layout_width="338dp"
-        android:layout_height="178dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.328"

@@ -28,8 +28,8 @@
 
      <fragment
         android:id="@+id/nav_add_admin"
-        android:name="com.example.wehelp.admin.AdminAddNewAdmin"
+        android:name="com.example.wehelp.admin.search.Admin_users_list"
         android:label="Add Admin"
-        tools:layout="@layout/activity_admin_add_new_admin" />
+        tools:layout="@layout/activity_admin_users_list_adapter" />
 
 </navigation>
