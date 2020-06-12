@@ -114,61 +114,41 @@ public class RegisterActivity extends AppCompatActivity {
                 String fname= firstname.getText().toString();
                 String lname = lastname.getText().toString();
                         if(!TextUtils.isEmpty(emailid) && !TextUtils.isEmpty(fname) && !TextUtils.isEmpty(lname) && !TextUtils.isEmpty(pass) && !TextUtils.isEmpty(confirmPass)){
-
                             if(pass.equals(confirmPass)) {
                                 if (calculateAge(getDob().getTime()) < 18) {
                                     Toast.makeText(RegisterActivity.this, "ERROR: User must be 18+", Toast.LENGTH_LONG).show();
                                 } else {
                                     regProgress.setVisibility(View.VISIBLE);
-
                                     mAuth.createUserWithEmailAndPassword(emailid, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
-
                                             if (task.isSuccessful()) {
-
                                                 FirebaseUser user = mAuth.getCurrentUser();
                                                 user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if (task.isSuccessful()) {
-
                                                             createUserinDb(emailid, mAuth.getCurrentUser().getUid());
                                                         } else {
                                                             Toast.makeText(RegisterActivity.this, "Invalid email address", Toast.LENGTH_LONG).show();
                                                         }
                                                     }
                                                 });
-
-
                                             } else {
-
                                                 String errorMessage = task.getException().getMessage();
-
                                                 Toast.makeText(RegisterActivity.this, "Error : " + errorMessage, Toast.LENGTH_LONG).show();
-
                                             }
-
                                             regProgress.setVisibility(View.INVISIBLE);
-
                                         }
                                     });
-
                                 }
                             }else {
-
                                 Toast.makeText(RegisterActivity.this, "Confirm Password and Password Field doesn't match.", Toast.LENGTH_LONG).show();
-
                             }
                         }
-                        //if the fields are empty
                 else{
-
-                            Toast.makeText(RegisterActivity.this, "Enter complete information", Toast.LENGTH_LONG).show();
-
-                        }
-
-
+                    Toast.makeText(RegisterActivity.this, "Enter complete information", Toast.LENGTH_LONG).show();
+                      }
                     }
                 });
 

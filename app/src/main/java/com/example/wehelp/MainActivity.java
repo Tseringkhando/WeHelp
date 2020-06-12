@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         mAuth= FirebaseAuth.getInstance();
+
         firestore=FirebaseFirestore.getInstance();
         if(mAuth.getCurrentUser()!=null)
         {

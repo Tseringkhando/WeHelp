@@ -49,7 +49,7 @@
         <activity android:name=".admin.Admin_category_single_view" />
         <activity android:name=".admin.Admin_post_detail_single" />
         <activity android:name=".admin.Admin_user_detail_single" />
-        <activity android:name=".admin.Admin_users_list_adapter" />
+        <activity android:name=".admin.search.Admin_users_list" />
         <activity android:name=".admin.AdminDashboard" />
         <activity android:name=".search.Search_res_single" />
         <activity

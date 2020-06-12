@@ -1,101 +1,55 @@
-package com.example.wehelp.search;
-
-
-import android.app.SearchManager;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.inputmethod.EditorInfo;
-import android.widget.SearchView;
-import android.widget.TextView;
+package com.example.wehelp.admin.search;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.MergeAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.SearchView;
+
 import com.example.wehelp.R;
-import com.example.wehelp.categories.Categorylist_model;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.example.wehelp.search.SearchList;
+import com.example.wehelp.search.SearchUsersModel;
+import com.example.wehelp.search.UserListAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
-public class SearchList extends AppCompatActivity {
+public class Admin_users_list extends Fragment {
+    private SearchView searchView1;
     private List<SearchUsersModel> alluserslists = new ArrayList<>();
-
-    public void setList(List<SearchUsersModel> alluserslists) {
-        System.out.println("value set ");
-        this.alluserslists=alluserslists;
-    }
-
-    public List<SearchUsersModel> getUserArrayList() {
-        return this.alluserslists;
-    }
-
     private RecyclerView search_res_adapter;
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-    private UserListAdapter userAdapter;
+    private AdminUserAdapter userAdapter;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_list);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        search_res_adapter = findViewById(R.id.search_res_adapter);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.activity_admin_users_list_adapter,container,false);
+        userAdapter=new AdminUserAdapter();
         fillUsersDataFromDatabase();
-    }
-
-    private void setUpRecyclerView() {
-        userAdapter = new UserListAdapter(getUserArrayList());
-        search_res_adapter.setHasFixedSize(true);
-        search_res_adapter.setLayoutManager(new LinearLayoutManager(SearchList.this));
-        search_res_adapter.setAdapter(userAdapter);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.searchbar, menu);
-        MenuItem item3 = menu.findItem(R.id.searchbar);
-        SearchView searchView1 = (SearchView) menu.findItem(R.id.searchbar).getActionView();
+        search_res_adapter = v.findViewById(R.id.admin_users_adapter);
+        searchView1= (SearchView)v.findViewById(R.id.adminSearchUsers);
         searchView1.setIconifiedByDefault(true);
         searchView1.setFocusable(true);
         searchView1.setIconified(false);
         searchView1.requestFocusFromTouch();
-        item3.setVisible(true);
-
-        SearchView searchView = (SearchView) item3.getActionView();
-        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
-        searchView.setQueryHint(getResources().getString(R.string.search_hint));
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView1.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView1.setQueryHint(getResources().getString(R.string.search_hint));
+        searchView1.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 userAdapter.getFilter().filter(query);
@@ -109,8 +63,18 @@ public class SearchList extends AppCompatActivity {
             }
         });
 
-        return true;
+
+        return v;
     }
+
+
+    private void setUpRecyclerView() {
+
+        search_res_adapter.setHasFixedSize(true);
+        search_res_adapter.setLayoutManager(new LinearLayoutManager(getContext()));
+        search_res_adapter.setAdapter(userAdapter);
+    }
+
 
     // method to list all the users from database into the arraylist
     public void fillUsersDataFromDatabase() {
@@ -130,8 +94,8 @@ public class SearchList extends AppCompatActivity {
                         String email = document.getString("email");
                         Boolean isAdmin = document.getBoolean("isAdmin");
                         alluserslists.add(new SearchUsersModel(uid, firstname, lastname, photo_url, contact, email, isAdmin, dob, datejoined));
+                        userAdapter = new AdminUserAdapter(alluserslists);
                     }
-                    setList(alluserslists);
                     setUpRecyclerView();
                 } else {
                     System.out.println("Data not found.");
@@ -139,6 +103,5 @@ public class SearchList extends AppCompatActivity {
             }
         });
     }
-
 
 }

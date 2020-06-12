@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -44,6 +45,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
     @Override
     public void onBindViewHolder(@NonNull final UserViewHolder holder, int position) {
         context=holder.itemView.getContext();
+        holder.delbtn.setVisibility(View.GONE);
         SearchUsersModel currentItem = userlist.get(position);
        final String userid = currentItem.getUser_id();
 //        holder.search_user_image.setImageResource(currentItem.getProfile_image());
@@ -85,12 +87,14 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.UserVi
         private TextView search_item_title, search_item_email;
         private CircleImageView search_user_image;
         private CardView usercard;
+        private Button delbtn;
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
             usercard= itemView.findViewById(R.id.searchuserdata_card);
             search_item_title=itemView.findViewById(R.id.search_res_title);
             search_user_image=itemView.findViewById(R.id.search_profile_pic);
             search_item_email = itemView.findViewById(R.id.search_res_email);
+            delbtn=itemView.findViewById(R.id.btnDelUser);
 
         }
         public Context getContext() {return itemView.getContext();}

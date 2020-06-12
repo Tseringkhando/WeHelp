@@ -19,7 +19,8 @@ import android.widget.TextView;
 
 import com.example.wehelp.R;
 import com.example.wehelp.Signin;
-import com.example.wehelp.User_profile;
+import com.example.wehelp.admin.search.AdminList;
+import com.example.wehelp.admin.search.Admin_users_list;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -86,13 +87,13 @@ public class Dashboard extends Fragment{
         card_users.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeFragment(new Admin_users_list_adapter());
+                changeFragment(new Admin_users_list());
             }
         });
         card_admins.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeFragment(new AdminListAdapter());
+                changeFragment(new AdminList());
             }
         });
 

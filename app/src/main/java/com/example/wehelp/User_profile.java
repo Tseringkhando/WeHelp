@@ -164,7 +164,6 @@ public class User_profile extends AppCompatActivity {
                 SimpleDateFormat simpleFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
                 Date d= model.getDate_added();
                 holder.date.setText(simpleFormat.format(d));
-
                 holder.category.setText(model.getCategory());
                 holder.description.setText(model.getDescription());
                 String uid= model.getUser_id();

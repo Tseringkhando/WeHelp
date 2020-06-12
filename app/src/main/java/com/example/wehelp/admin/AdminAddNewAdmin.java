@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,17 +23,26 @@ import android.widget.Toast;
 import com.example.wehelp.MainActivity;
 import com.example.wehelp.R;
 import com.example.wehelp.RegisterActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AdminAddNewAdmin extends Fragment {
     private TextInputEditText adminFname,adminLname,adminEmail, adminPassword, adminContact;
     private RadioGroup adminGender;
+    private RadioButton genderVal;
     private int genderId;
     private RadioButton btnAdminGender;
     private Button adminDob,saveAdmin;
@@ -56,6 +66,7 @@ public class AdminAddNewAdmin extends Fragment {
         adminPassword=v.findViewById(R.id.adminPw);
         adminGender= v.findViewById(R.id.adminGenderGroup);
         genderId=adminGender.getCheckedRadioButtonId();
+        genderVal=(RadioButton)v.findViewById(genderId);
         btnAdminGender=(RadioButton)v.findViewById(genderId);
         adminDob=v.findViewById(R.id.btn_register_admin_dob);
         saveAdmin=v.findViewById(R.id.btn_save_admin);
@@ -91,6 +102,51 @@ public class AdminAddNewAdmin extends Fragment {
                 dateDialog.getDatePicker().setMinDate(minDate);
                 dateDialog.show();
             }
+        });
+
+        //save admin
+        saveAdmin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String  emailid= adminEmail.getText().toString();
+                String pass = adminPassword.getText().toString();
+                String fname= adminFname.getText().toString();
+                String lname = adminFname.getText().toString();
+
+                if(!TextUtils.isEmpty(emailid) && !TextUtils.isEmpty(fname) && !TextUtils.isEmpty(lname) && !TextUtils.isEmpty(pass) && getDob()!=null ){
+                        if (calculateAge(getDob().getTime()) < 18) {
+                            Toast.makeText(getContext(), "ERROR: User must be 18+", Toast.LENGTH_LONG).show();
+                        } else {
+                            regProgress.setVisibility(View.VISIBLE);
+                            mAuth.createUserWithEmailAndPassword(emailid, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        FirebaseUser user = mAuth.getCurrentUser();
+                                        user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    createUserinDb(emailid, mAuth.getCurrentUser().getUid());
+                                                } else {
+                                                    Toast.makeText(getContext(), "Invalid email address", Toast.LENGTH_LONG).show();
+                                                }
+                                            }
+                                        });
+                                    } else {
+                                        String errorMessage = task.getException().getMessage();
+                                        Toast.makeText(getContext(), "Error : " + errorMessage, Toast.LENGTH_LONG).show();
+                                    }
+                                    regProgress.setVisibility(View.INVISIBLE);
+                                }
+                            });
+                        }
+
+                }
+                else{
+                    Toast.makeText(getContext(), "Enter complete information", Toast.LENGTH_LONG).show();
+                }
+         }
         });
         return v;
     }
@@ -137,4 +193,47 @@ public class AdminAddNewAdmin extends Fragment {
     public void setDob(Date dob) {
         this.dob = dob;
     }
+
+    //this inserts the data in the database
+    private void createUserinDb(String email_id, String uid)
+    {
+
+        String fname= adminFname.getText().toString();
+        String lname = adminLname.getText().toString();
+        Date dob=getDob();
+
+        // Create a new user with a first and last name
+        Map<String, Object> user = new HashMap<>();
+        user.put("firstname", fname);
+        user.put("lastname", lname);
+        user.put("isAdmin", true);
+        user.put("email", email_id);
+        user.put("user_id",uid);
+        user.put("dob",dob);
+        user.put("contact","");
+        user.put("gender",genderVal.getText());
+        user.put("profile_image","");
+        user.put("datejoined", FieldValue.serverTimestamp());
+
+// Add a new document with a generated ID
+        db.collection("users")
+                .add(user)
+                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        if(task.isSuccessful())
+                        {
+//                            openDialog();
+
+                            regProgress.setVisibility(View.INVISIBLE);
+                        }
+                        else
+                        {
+                            regProgress.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+
+    }
+
 }
