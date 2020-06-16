@@ -174,8 +174,12 @@ public class Dashboard extends Fragment{
     //open login page
     private void logOut() {
         mAuth.signOut();
-        Intent openLogin = new Intent(getContext(), Signin.class);
-        startActivity(openLogin);
+        if(mAuth.getCurrentUser()==null)
+        {
+            Intent openLogin = new Intent(getContext(), Signin.class);
+            startActivity(openLogin);
+        }
+
     }
 
     //change fragment on card click

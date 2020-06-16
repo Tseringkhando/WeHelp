@@ -135,9 +135,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent chatbot = new Intent(MainActivity.this, ChatBotMessage.class);
                 startActivity(chatbot);
 
-//
-//                Intent maps = new Intent(MainActivity.this, MapPersmission.class);
-//                startActivity(maps);
 
             }
         });
@@ -145,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_categories,R.id.nav_organisations,R.id.nav_friends,R.id.nav_profile)
+                R.id.nav_home, R.id.nav_categories,R.id.nav_signout)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -249,12 +246,14 @@ public class MainActivity extends AppCompatActivity {
     private void logOut() {
         mAuth.signOut();
        Intent openLogin = new Intent(MainActivity.this, Signin.class);
+       finish();
        startActivity(openLogin);
     }
 //open register page
     private  void register()
     {
         Intent openRegister = new Intent(MainActivity.this, RegisterActivity.class);
+        finish();
         startActivity(openRegister);
     }
 

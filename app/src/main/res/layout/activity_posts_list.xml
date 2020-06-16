@@ -114,14 +114,41 @@
                 app:layout_constraintTop_toBottomOf="@+id/posted_description">
 
                 <Button
+                    android:id="@+id/btn_post_user_call"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Call"
+                    android:textAllCaps="false"
+                    android:textColor="#000000"
+                    app:icon="@drawable/ic_call_black_24dp"
+                    app:iconTint="#000000" />
+
+                <Button
+                    android:id="@+id/btn_post_user_text"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Message"
+                    android:textAllCaps="false"
+                    android:textColor="#000000"
+                    app:icon="@drawable/ic_textsms_black_24dp"
+                    app:iconTint="#000000" />
+
+                <Button
                     android:id="@+id/btn_post_user_contact"
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Contact"
+                    android:text="Email"
                     android:textAllCaps="false"
-                    android:textColor="#000000" />
+                    android:textColor="#000000"
+                    app:icon="@drawable/ic_email_black_24dp"
+                    app:iconTint="#000000" />
+
             </LinearLayout>
 
             <Button

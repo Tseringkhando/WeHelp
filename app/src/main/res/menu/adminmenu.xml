@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view">
+    tools:showIn="navigation_view"
+ >
 
     <group android:checkableBehavior="single">
         <item
@@ -10,20 +11,20 @@
             android:title="Dashboard" />
         <item
             android:id="@+id/nav_admin_categories"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_category_24px"
             android:title="Categories" />
         <item
             android:id="@+id/nav_admins"
-            android:icon="?android:attr/fingerprintAuthDrawable"
+            android:icon="@drawable/ic_verified_user_black_24dp"
             android:title="Admins" />
         <item
             android:id="@+id/nav_users"
-            android:icon="@drawable/ic_users"
+            android:icon="@drawable/ic_group_24px"
             android:title="Users" />
 
         <item
             android:id="@+id/nav_add_admin"
-            android:icon="@drawable/ic_user"
+            android:icon="@drawable/ic_person_add_24px"
             android:title="Add Admin" />
 
     </group>

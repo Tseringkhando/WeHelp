@@ -3,42 +3,31 @@ package com.example.wehelp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -55,17 +44,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 import java.util.UUID;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import newpost.NewPost;
 
 public class SetupAccount extends AppCompatActivity {
     private Button btn_dob, btn_save_account, btn_not_now;
     private TextView view_dob;
     private TextInputEditText contact_no_field, firstname_field, lastname_field;
+    private RadioGroup userGender;
+    private RadioButton genderVal,male,female,others;
+    private int genderId;
     private Boolean image_changed = false;
     private CircleImageView profile_image_view;
     private Uri mainImageURI = null;
@@ -76,7 +66,6 @@ public class SetupAccount extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
     private Date dob;
-    private Bitmap compressedImageFile;
     //for progress dialog to be shown
     private ProgressBar progressBar;
 
@@ -86,8 +75,7 @@ public class SetupAccount extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_setup_account);
-        getSupportActionBar().hide();
-
+        getSupportActionBar().setTitle("Edit Your Profile");
         btn_dob = findViewById(R.id.btn_dob);
         view_dob = findViewById(R.id.view_dob);
         contact_no_field = findViewById(R.id.acc_contact);
@@ -97,6 +85,22 @@ public class SetupAccount extends AppCompatActivity {
         firstname_field = findViewById(R.id.acc_firstname);
         lastname_field = findViewById(R.id.acc_lastname);
         progressBar=findViewById(R.id.progressBar2);
+        userGender= findViewById(R.id.radioGroupGenderUser);
+        male=findViewById(R.id.radio_male);
+
+        female=findViewById(R.id.radio_female);
+        others=findViewById(R.id.radio_others);
+        genderId=userGender.getCheckedRadioButtonId();
+        genderVal=(RadioButton)findViewById(genderId);
+        userGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                genderId=userGender.getCheckedRadioButtonId();
+                genderVal=(RadioButton)findViewById(genderId);
+                System.out.println(genderId + ", "+ genderVal.getText()+", ");
+            }
+        });
+
         firebaseAuth = FirebaseAuth.getInstance();
         user_id = firebaseAuth.getCurrentUser().getUid();
         firebaseFirestore = FirebaseFirestore.getInstance();
@@ -160,6 +164,18 @@ public class SetupAccount extends AppCompatActivity {
                                 .placeholder(R.drawable.default_profile_img)
                                 .into(profile_image_view);
                         progressBar.setVisibility(View.GONE);
+                        String gender = document.getString("gender");
+                        if(gender.toLowerCase().equals("male"))
+                        {
+
+                        }
+                        else if(gender.toLowerCase().equals("female"))
+                        {
+                            
+
+                        }
+                        else{
+                        }
                     }
                 } else {
                     String error = task.getException().getMessage();
@@ -183,52 +199,60 @@ public class SetupAccount extends AppCompatActivity {
         btn_save_account.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE );
-
+                String phoneregex= "^\\+[0-9]{10,13}$";
                 String fname= firstname_field.getText().toString();
                  String lasname= lastname_field.getText().toString();
                  String contact=contact_no_field.getText().toString();
 
-                if(!fname.equals("") && !lasname.equals(""))
-                {
-                    if(calculateAge(getDob().getTime())<18)
-                    {
-                        Toast.makeText(SetupAccount.this, "ERROR: User must be 18+", Toast.LENGTH_LONG).show();
-                    }
-                    else {
-                        //if the user selects new profile picture, picture needs to be uploaded too
-                        if (getImage_changed()) {
-                            //PHOTO UPLOAD
-                            String imagename = UUID.randomUUID().toString() + "." + getExtension(mainImageURI);
-                            final StorageReference imageRef = storageReference.child("user_profile_image/" + imagename);
+                    if(fname.equals("") || lasname.equals(""))
+                    {alertBox("Enter full name");}
+                        else if(calculateAge(getDob().getTime())<18)
+                        { alertBox("ERROR: User must be 18+"); }
 
-                            UploadTask imageUpload = imageRef.putFile(mainImageURI);
-                            imageUpload.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                                @Override
-                                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                    if (!task.isSuccessful()) {
-                                        throw task.getException();
-                                    }
-                                    return imageRef.getDownloadUrl();
+                           else if(!contact.matches(phoneregex))
+                            { alertBox("ERROR:Invalid contact no.");}
+                                //if the user selects new profile picture, picture needs to be uploaded too
+                else {
+                                if (getImage_changed()) {
+                                    //PHOTO UPLOAD
+                                    String imagename = UUID.randomUUID().toString() + "." + getExtension(mainImageURI);
+                                    final StorageReference imageRef = storageReference.child("user_profile_image/" + imagename);
+
+                                    UploadTask imageUpload = imageRef.putFile(mainImageURI);
+                                    imageUpload.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                        @Override
+                                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                            if (!task.isSuccessful()) {
+                                                throw task.getException();
+                                            }
+                                            return imageRef.getDownloadUrl();
+                                        }
+                                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Uri> task) {
+                                            if (task.isSuccessful()) {
+                                                storeToDatabase(task, user_id, firstname_field.getText().toString(), lastname_field.getText().toString(), getDob(), contact_no_field.getText().toString());
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    storeToDatabase(null, user_id, fname, lasname, getDob(), contact);
                                 }
-                            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Uri> task) {
-                                    if (task.isSuccessful()) {
-                                        storeToDatabase(task, user_id, firstname_field.getText().toString(), lastname_field.getText().toString(), getDob(), contact_no_field.getText().toString());
-                                    }
-                                }
-                            });
-                        } else {
-                            storeToDatabase(null, user_id, fname, lasname, getDob(), contact);
-                        }
+                            }
+
                     }
-                }
 
 
+
+            });
+
+        //not now button
+        btn_not_now.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
-
     }
 
         private void startCropImageActivity () {
@@ -329,13 +353,12 @@ public class SetupAccount extends AppCompatActivity {
     //METHOD TO STORE THE DATA IN THE FIREBASE DATABASE
     private  void storeToDatabase( Task<Uri> task,  String user_id, String fname, String lname, Date dob, String contact)
     {
-
-
         if(task != null) {
             uploadedPhoto_url = task.getResult().toString();
         }
             Map <String , Object> obj = new HashMap<>();
             obj.put("contact",contact);
+            obj.put("gender",genderVal.getText().toString());
             obj.put("dob",dob);
             obj.put("firstname",fname);
             obj.put("lastname",lname);
@@ -361,6 +384,20 @@ public class SetupAccount extends AppCompatActivity {
 
     public void setAccount_id(String account_id) {
         this.account_id = account_id;
+    }
+
+    public void alertBox(String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(SetupAccount.this);
+        builder.setTitle(R.string.app_name);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setMessage(msg)
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }
 

@@ -6,42 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".SetupAccount">
 
-<!--    <EditText-->
-<!--        android:id="@+id/lastname_field"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-
-<!--        android:layout_marginStart="24dp"-->
-<!--        android:layout_marginTop="24dp"-->
-<!--        android:layout_marginEnd="24dp"-->
-<!--        android:hint="@string/lastname"-->
-<!--        android:inputType="textEmailAddress"-->
-<!--        android:selectAllOnFocus="true"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="1.0"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/firstname_field" />-->
-
-<!--    <EditText-->
-<!--        android:id="@+id/firstname_field"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-
-<!--        android:layout_marginStart="24dp"-->
-<!--        android:layout_marginTop="40dp"-->
-<!--        android:layout_marginEnd="24dp"-->
-<!--        android:hint="@string/firstname"-->
-<!--        android:inputType="textEmailAddress"-->
-<!--        android:selectAllOnFocus="true"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/textView4" />-->
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/upload_profile"
         android:layout_width="125dp"
         android:layout_height="120dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/profilepic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,7 +38,7 @@
         android:layout_marginEnd="39dp"
         android:backgroundTint="#E8E8E8"
         android:text="Not now"
-        android:textColor="@android:color/background_light"
+        android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toEndOf="@+id/btn_save_account"
@@ -86,32 +56,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view_dob" />
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="Setup your account" />
-
-    <!--    <EditText-->
-<!--        android:id="@+id/contact_number_field"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="24dp"-->
-<!--        android:layout_marginTop="24dp"-->
-<!--        android:layout_marginEnd="24dp"-->
-<!--        android:ems="10"-->
-<!--        android:hint="Contact no."-->
-<!--        android:inputType="phone"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.0"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/lastname_field" />-->
 
     <TextView
         android:id="@+id/view_dob"
@@ -148,8 +92,7 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar2" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/firstname_field"

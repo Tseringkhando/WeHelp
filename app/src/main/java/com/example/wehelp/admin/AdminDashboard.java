@@ -45,7 +45,7 @@ public class AdminDashboard extends AppCompatActivity {
             NavigationView navigationView = findViewById(R.id.nav_admin_view);
             View nav = navigationView.getHeaderView(0);
             mAppBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.nav_dashboard, R.id.nav_admin_categories,R.id.nav_users,R.id.nav_admins,R.id.nav_profile)
+                    R.id.nav_dashboard, R.id.nav_admin_categories,R.id.nav_users,R.id.nav_admins,R.id.nav_add_admin)
                     .setDrawerLayout(drawer)
                     .build();
 

@@ -44,35 +44,13 @@ public class HomeFragment extends Fragment {
     private RecyclerView posts_recycler;
     private CircleImageView current_user_image;
     private EditText edit_post;
-    //to check if the user is logged in or not
-    //to check if the user is logged in or not
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
     private FirestoreRecyclerAdapter adapter;
-
-    public String getName() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     private String username;
     private  String uemail;
-
-    public String getProfile_pic_url() {
-        return profile_pic_url;
-    }
-
-    public void setProfile_pic_url(String profile_pic_url) {
-        this.profile_pic_url = profile_pic_url;
-    }
-
     private String profile_pic_url;
-
-  //  private HomeViewModel homeViewModel;
-
+    private String contactNo;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -153,7 +131,7 @@ public class HomeFragment extends Fragment {
                 holder.btn_deletepost.setVisibility(View.GONE);
                 holder.btn_post_user_contact.setVisibility(View.VISIBLE);
                 //Display date into string format
-                SimpleDateFormat simpleFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
+                SimpleDateFormat simpleFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss");
                 Date d= model.getDate_added();
                 holder.date.setText(simpleFormat.format(d));
                 holder.category.setText(model.getCategory());
@@ -180,7 +158,6 @@ public class HomeFragment extends Fragment {
                                 intent.putExtra(Intent.EXTRA_EMAIL, recipients);
                                 intent.putExtra(Intent.EXTRA_SUBJECT,"Replying to : "+post_category+": "+ post_desc);
                                 intent.putExtra(Intent.EXTRA_TEXT,"");
-//                        intent.putExtra(Intent.EXTRA_CC,"mailcc@gmail.com");
                                 intent.setType("text/html");
                                 intent.setPackage("com.google.android.gm");
                                 startActivity(Intent.createChooser(intent, "Send mail"));
@@ -188,6 +165,53 @@ public class HomeFragment extends Fragment {
                         });
                     }
                 } , uid);
+
+                //call or text user if the contact no. is given
+                getUserContact(new Callback() {
+                    @Override
+                    public void firebaseResponseCallback(final String result) {
+                        if(result.length()>0)
+                        {
+                            final String number= result;
+                            holder.btn_post_usr_text.setEnabled(true);
+                            holder.btn_post_user_call.setEnabled(true);
+                            //call
+                            holder.btn_post_user_call.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Uri calluri= Uri.parse("tel:" + number);
+                                    Intent i = new Intent(Intent.ACTION_DIAL, calluri);
+                                    try {
+                                        startActivity(i);
+                                    }catch (SecurityException e)
+                                    {
+                                        Toast.makeText(getContext(), "Unable to make call", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                            //message
+                            holder.btn_post_usr_text.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Uri sms_uri = Uri.parse("smsto:"+result);
+                                    Intent sms_intent = new Intent(Intent.ACTION_SENDTO, sms_uri);
+                                    sms_intent.putExtra("sms_body", "Replying to :"+post_category+": "+ post_desc);
+                                    try {
+                                        startActivity(sms_intent);
+                                    }catch (SecurityException e)
+                                    {
+                                        Toast.makeText(getContext(), "Unable to send sms", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                        }
+                        else
+                        {
+                            holder.btn_post_usr_text.setEnabled(false);
+                            holder.btn_post_user_call.setEnabled(false);
+                        }
+                    }
+                },uid);
                 //open user profile when the user's profile picture and name are clicked
                 holder.post_user_image.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -296,13 +320,15 @@ public class HomeFragment extends Fragment {
     }
 
 
+
+
     private class PostsViewHolder extends RecyclerView.ViewHolder {
         // widget variables
         private CircleImageView post_user_image;
         private TextView username, date, category, description;
         private ImageView post_image;
         private Button btn_deletepost;
-        private Button btn_post_user_contact;
+        private Button btn_post_user_contact,btn_post_user_call, btn_post_usr_text;
 
 
         public PostsViewHolder(@NonNull View itemView) {
@@ -316,6 +342,8 @@ public class HomeFragment extends Fragment {
             post_image=itemView.findViewById(R.id.post_image);
             btn_deletepost=itemView.findViewById(R.id.btn_deletepost);
             btn_post_user_contact= itemView.findViewById(R.id.btn_post_user_contact);
+            btn_post_user_call=itemView.findViewById(R.id.btn_post_user_call);
+            btn_post_usr_text=itemView.findViewById(R.id.btn_post_user_text);
         }
     }
 
@@ -373,6 +401,24 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+    //get contact no.
+    public void getUserContact(final Callback callback, String user_id)
+    {
+        //to get user name
+        firestore.collection("users").whereEqualTo("user_id",user_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String contact= document.getString("contact");
+                        setContactNo(contact);
+                    }
+                }
+                callback.firebaseResponseCallback(getContactNo());
+            }
+        });
+    }
 
     //USER_POST_PROFILE IMAGE
     public void getProfileImage(final Callback callback, String user_id)
@@ -402,5 +448,20 @@ public class HomeFragment extends Fragment {
         myprofile.putExtra("user_id", user_id);
         startActivity(myprofile);
     }
+
+    public String getName() {
+        return username;
+    }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    public String getProfile_pic_url() {
+        return profile_pic_url;
+    }
+    public void setProfile_pic_url(String profile_pic_url) {
+        this.profile_pic_url = profile_pic_url;
+    }
+    public String getContactNo() { return contactNo; }
+    public void setContactNo(String contactNo) { this.contactNo = contactNo; }
 
 }

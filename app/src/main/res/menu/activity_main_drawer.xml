@@ -10,21 +10,14 @@
             android:title="@string/menu_newsfeed" />
         <item
             android:id="@+id/nav_categories"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_category_24px"
             android:title="@string/menu_categories" />
-        <item
-            android:id="@+id/nav_organisations"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_organisations" />
-        <item
-            android:id="@+id/nav_friends"
-            android:icon="@drawable/ic_users"
-            android:title="@string/menu_friends" />
+
 
         <item
-            android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_menu_share"
-            android:title="@string/menu_profile" />
+            android:id="@+id/nav_signout"
+            android:icon="@drawable/ic_logout"
+            android:title="Sign Out" />
 
     </group>
 

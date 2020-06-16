@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,8 +45,10 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView view_reg_dob;
     private ProgressBar regProgress;
     private FirebaseAuth mAuth;
-    private  FirebaseFirestore db;
-
+    private FirebaseFirestore db;
+    private RadioGroup userGender;
+    private RadioButton genderVal;
+    private int genderId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +64,16 @@ public class RegisterActivity extends AppCompatActivity {
         lastname=findViewById(R.id.reg_lname);
         btn_reg_dob= findViewById(R.id.btn_register_dob);
         view_reg_dob=findViewById(R.id.view_reg_dob);
+        userGender= findViewById(R.id.reg_radioGroupGender);
+        genderId=userGender.getCheckedRadioButtonId();
+        genderVal=(RadioButton)findViewById(genderId);
+        userGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                genderId=userGender.getCheckedRadioButtonId();
+                genderVal=(RadioButton)findViewById(genderId);
+            }
+        });
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         //check if the user is loggedin or not
@@ -172,6 +186,7 @@ public class RegisterActivity extends AppCompatActivity {
         user.put("user_id",uid);
         user.put("dob",dob);
         user.put("contact","");
+        user.put("gender",genderVal.getText().toString());
         user.put("profile_image","");
         user.put("datejoined", FieldValue.serverTimestamp());
 
@@ -249,5 +264,14 @@ public class RegisterActivity extends AppCompatActivity {
             age--;
         }
         return age;
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        Intent mainpage = new Intent(RegisterActivity.this, MainActivity.class);
+        finish();
+        startActivity(mainpage);
+        super.onBackPressed();
     }
 }
