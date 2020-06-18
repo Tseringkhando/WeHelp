@@ -35,6 +35,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.view.Menu;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -44,7 +46,10 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
+    private SwipeRefreshLayout swipeHome;
     private boolean isUserVerified=false, isUserAdmin=false;
+    public void setUserVerified(boolean b) {this.isUserVerified=b;}
+    public boolean getUserVerified(){return  this.isUserVerified;}
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -53,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
         firestore=FirebaseFirestore.getInstance();
         if(mAuth.getCurrentUser()!=null)
         {
+            if(mAuth.getCurrentUser().isEmailVerified())
+            {
+                setUserVerified(true);
+            }
             firestore.collection("users").whereEqualTo("user_id",mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -85,8 +94,18 @@ public class MainActivity extends AppCompatActivity {
     public void callLayout()
     {
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        getSupportActionBar().hide();
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+        swipeHome=findViewById(R.id.swipeHome);
+        swipeHome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeHome.setRefreshing(false);
+                finish();
+                startActivity(getIntent());
+            }
+        });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         View nav = navigationView.getHeaderView(0);
@@ -95,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
         //check if the user is loggedin or not
         if(mAuth.getCurrentUser()!=null && mAuth.getCurrentUser().isEmailVerified())
         {
+            setUserVerified(true);
             isUserVerified=true;
 
             current_user_image.setVisibility(View.VISIBLE);
@@ -157,25 +177,24 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem item3 = menu.findItem(R.id.app_bar_search);
         item3.setVisible(true);
+        MenuItem setting = menu.findItem(R.id.action_settings);
+        MenuItem item = menu.findItem(R.id.action_login);
+        MenuItem item2 = menu.findItem(R.id.action_register);
+        MenuItem logout = menu.findItem(R.id.action_signout);
 
-        if(isUserVerified==true)
+
+        if(getUserVerified())
         {
-            MenuItem item = menu.findItem(R.id.action_login);
+            setting.setVisible(true);
+            logout.setVisible(true);
             item.setVisible(false);
-
-            MenuItem item2 = menu.findItem(R.id.action_register);
             item2.setVisible(false);
-
 
         }
         else
         {
-            MenuItem setting = menu.findItem(R.id.action_settings);
             setting.setVisible(false);
-
-            MenuItem logout = menu.findItem(R.id.action_signout);
             logout.setVisible(false);
-
         }
         return true;
     }

@@ -17,17 +17,22 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.wehelp.R;
 import com.example.wehelp.User_profile;
 import com.example.wehelp.admin.Admin_user_detail_single;
 import com.example.wehelp.search.SearchUsersModel;
 import com.example.wehelp.search.UserListAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -51,17 +56,20 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
 
     }
 
+
     @NonNull
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_search_res_single,
                 parent, false);
+
         return new UserViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AdminUserAdapter.UserViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull  AdminUserAdapter.UserViewHolder holder, int position) {
         context=holder.itemView.getContext();
+
         SearchUsersModel currentItem = userlist.get(position);
         final String user_id = currentItem.getUser_id();
         String fullname = currentItem.getFirstname()+ " " + currentItem.getLastname();
@@ -81,6 +89,20 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
         });
 
         //delete user
+        //to get the id of user in users table and delte the user
+        final String[] userdbi = {""};
+        firestore.collection("users").whereEqualTo("user_id",user_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        userdbi[0] =document.getId();
+                    }
+                }
+            }
+        });
+
         holder.btn_del_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,11 +113,12 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                firestore.collection("users").document(user_id)
+                                firestore.collection("users").document(userdbi[0])
                                         .delete()
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
+                                                notifyDataSetChanged();
                                                 Toast.makeText(context,"User Deleted",Toast.LENGTH_LONG).show();
                                             }
                                         })
@@ -116,6 +139,7 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
                 alert.show();
             }
         });
+
     }
 
     @Override
@@ -141,6 +165,7 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
             private Button btn_del_user;
         public UserViewHolder(@NonNull View itemView) {
                 super(itemView);
+
                 usercard= itemView.findViewById(R.id.searchuserdata_card);
                 search_item_title=itemView.findViewById(R.id.search_res_title);
                 search_user_image=itemView.findViewById(R.id.search_profile_pic);
@@ -176,7 +201,8 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.User
 
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
-            userlist.clear();
+            if(userlist.size()>0)
+                userlist.clear();
             userlist.addAll((List) results.values);
             notifyDataSetChanged();
         }

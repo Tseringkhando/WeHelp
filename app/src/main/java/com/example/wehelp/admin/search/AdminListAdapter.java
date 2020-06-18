@@ -18,14 +18,19 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.wehelp.R;
 import com.example.wehelp.admin.Admin_user_detail_single;
 import com.example.wehelp.search.SearchUsersModel;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -89,6 +94,19 @@ public class AdminListAdapter extends RecyclerView.Adapter<AdminListAdapter.User
         {
             holder.btn_del_user.setVisibility(View.GONE);
         }
+        //to get the id of user in users table and delte the user
+        final String[] userdbi = {""};
+        firestore.collection("users").whereEqualTo("user_id",userid).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                       userdbi[0] =document.getId();
+                    }
+                }
+            }
+        });
         holder.btn_del_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,11 +117,12 @@ public class AdminListAdapter extends RecyclerView.Adapter<AdminListAdapter.User
                         .setCancelable(false)
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                firestore.collection("users").document(userid)
+                                firestore.collection("users").document(userdbi[0])
                                         .delete()
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
+                                                notifyDataSetChanged();
                                                 Toast.makeText(context,"User Deleted",Toast.LENGTH_LONG).show();
                                             }
                                         })
@@ -125,6 +144,8 @@ public class AdminListAdapter extends RecyclerView.Adapter<AdminListAdapter.User
                 alert.show();
             }
         });
+
+
     }
 
     private void openUserProfile(String userid) {

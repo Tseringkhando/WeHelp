@@ -36,7 +36,7 @@
         android:layout_width="88dp"
         android:layout_height="85dp"
         android:layout_marginTop="44dp"
-        android:background="@drawable/default_profile_img"
+        android:background="@drawable/corner_border"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.884"

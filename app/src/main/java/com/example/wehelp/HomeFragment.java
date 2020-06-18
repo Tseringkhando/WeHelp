@@ -10,8 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -35,10 +36,9 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import newpost.NewPost;
+import com.example.wehelp.newpost.NewPost;
 
 public class HomeFragment extends Fragment {
     private RecyclerView posts_recycler;
@@ -129,9 +129,9 @@ public class HomeFragment extends Fragment {
                 final String post_category= model.getCategory();
                 final String post_desc = model.getDescription();
                 holder.btn_deletepost.setVisibility(View.GONE);
-                holder.btn_post_user_contact.setVisibility(View.VISIBLE);
+                holder.contact_btns.setVisibility(View.VISIBLE);
                 //Display date into string format
-                SimpleDateFormat simpleFormat = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss");
+                SimpleDateFormat simpleFormat = new SimpleDateFormat("dd MMM yyyy, hh:mm:ss a");
                 Date d= model.getDate_added();
                 holder.date.setText(simpleFormat.format(d));
                 holder.category.setText(model.getCategory());
@@ -232,7 +232,7 @@ public class HomeFragment extends Fragment {
                 {
                     if(model.getUser_id().equals(mAuth.getCurrentUser().getUid()))
                     {
-                        holder.btn_post_user_contact.setVisibility(View.GONE);
+                        holder.contact_btns.setVisibility(View.GONE);
                         holder.btn_deletepost.setVisibility(View.VISIBLE);
                         holder.btn_deletepost.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -329,7 +329,7 @@ public class HomeFragment extends Fragment {
         private ImageView post_image;
         private Button btn_deletepost;
         private Button btn_post_user_contact,btn_post_user_call, btn_post_usr_text;
-
+        private LinearLayout contact_btns;
 
         public PostsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -344,6 +344,7 @@ public class HomeFragment extends Fragment {
             btn_post_user_contact= itemView.findViewById(R.id.btn_post_user_contact);
             btn_post_user_call=itemView.findViewById(R.id.btn_post_user_call);
             btn_post_usr_text=itemView.findViewById(R.id.btn_post_user_text);
+            contact_btns=itemView.findViewById(R.id.linear_contact);
         }
     }
 

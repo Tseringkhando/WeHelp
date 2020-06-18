@@ -71,7 +71,7 @@
         <activity android:name=".chatbot.ChatBotMessage" />
         <activity android:name=".User_profile" />
         <activity android:name=".categories.Category_post" />
-        <activity android:name="newpost.NewPost" />
+        <activity android:name="com.example.wehelp.newpost.NewPost" />
         <activity android:name=".Posts_list" />
         <activity android:name=".SetupAccount" />
         <activity android:name=".RegisterActivity" />
@@ -82,7 +82,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

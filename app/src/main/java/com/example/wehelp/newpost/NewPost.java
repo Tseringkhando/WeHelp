@@ -1,52 +1,42 @@
-package newpost;
+package com.example.wehelp.newpost;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.wehelp.ProgressDialog;
 import com.example.wehelp.R;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
-import org.w3c.dom.Text;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +47,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NewPost extends AppCompatActivity {
     //UI WIDGETS
+
+    ProgressDialog p =new ProgressDialog(NewPost.this);
     private Spinner categoryDropdown;
     private TextView textview_username;
     private ImageView uploadedImageView;
@@ -181,6 +173,7 @@ public class NewPost extends AppCompatActivity {
                     //with photo
                     if(photo_url!=null)
                     {
+                        p.showProgressDialog();
                         //PHOTO UPLOAD
                         String imagename=UUID.randomUUID().toString()+"."+getExtension(photo_url);
                         final StorageReference imageRef =storage.child("user_posts/"+imagename);
@@ -199,6 +192,7 @@ public class NewPost extends AppCompatActivity {
                             public void onComplete(@NonNull Task<Uri> task) {
                                 if(task.isSuccessful())
                                 {
+                                    p.showProgressDialog();
                                     uploadedPhoto_url=task.getResult().toString();
                                     post_category= categoryDropdown.getSelectedItem().toString();
                                     Map <String , Object> obj = new HashMap<>();
@@ -214,11 +208,13 @@ public class NewPost extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<DocumentReference> task) {
                                                     if(task.isSuccessful())
                                                     {
-                                                        Toast.makeText(NewPost.this,"successful",Toast.LENGTH_LONG).show();
+                                                        p.dismissProgressDialog();
+                                                        Toast.makeText(NewPost.this,"Posted",Toast.LENGTH_LONG).show();
+                                                        finish();
                                                     }
                                                     else
                                                     {
-                                                        Toast.makeText(NewPost.this,"not successful",Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(NewPost.this,"Request not completed",Toast.LENGTH_LONG).show();
                                                     }
                                                 }
                                             });
@@ -227,10 +223,15 @@ public class NewPost extends AppCompatActivity {
 
                                 }
                             }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                p.dismissProgressDialog();
+                            }
                         });
                     }
                     else{
-
+                        p.showProgressDialog();
 //                    //without photo
                     post_category= categoryDropdown.getSelectedItem().toString();
                     Map <String , Object> obj = new HashMap<>();
@@ -246,12 +247,13 @@ public class NewPost extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<DocumentReference> task) {
                                     if(task.isSuccessful())
                                     {
-
-                                        Toast.makeText(NewPost.this,"successful",Toast.LENGTH_LONG).show();
+                                        p.dismissProgressDialog();
+                                        Toast.makeText(NewPost.this,"Posted",Toast.LENGTH_LONG).show();
+                                        finish();
                                     }
                                     else
                                     {
-                                        Toast.makeText(NewPost.this,"not successful",Toast.LENGTH_LONG).show();
+                                        Toast.makeText(NewPost.this,"Request not completed",Toast.LENGTH_LONG).show();
                                     }
                                 }
                             });

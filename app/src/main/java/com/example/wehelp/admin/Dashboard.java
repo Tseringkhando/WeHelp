@@ -18,7 +18,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.wehelp.R;
+import com.example.wehelp.SetupAccount;
 import com.example.wehelp.Signin;
+import com.example.wehelp.User_profile;
 import com.example.wehelp.admin.search.AdminList;
 import com.example.wehelp.admin.search.Admin_users_list;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -49,7 +51,7 @@ public class Dashboard extends Fragment{
     private String currentAdminId="";
     private TextView adminusername;
     private CircleImageView adminProfilePicture;
-    private Button btnSignOut;
+    private Button btnSignOut,btnEditProfile;
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
     private CardView card_users,card_admins, card_categories, card_addAdmin, card_addCat,card_posts;
@@ -82,7 +84,7 @@ public class Dashboard extends Fragment{
         card_addAdmin=view.findViewById(R.id.card_addAdmin);
         card_addCat=view.findViewById(R.id.card_addCat);
         card_posts=view.findViewById(R.id.card_posts);
-
+        btnEditProfile=view.findViewById(R.id.btn_edit);
 //        card functionalities
         card_users.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,6 +132,15 @@ public class Dashboard extends Fragment{
             }
         });
 
+//        edit admins profile
+        btnEditProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent myprofile= new Intent(getContext(), SetupAccount.class);
+                myprofile.putExtra("user_id", "");
+                startActivity(myprofile);
+            }
+        });
 
         //admin name and photo
         //MAKING THE POST OPTION AVAILABLE TO THE LOGGED IN USERS ONLY
@@ -138,9 +149,9 @@ public class Dashboard extends Fragment{
             adminProfilePicture.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Intent myprofile= new Intent(getContext(), User_profile.class);
-//                    myprofile.putExtra("user_id", "");
-//                    startActivity(myprofile);
+                    Intent myprofile= new Intent(getContext(), User_profile.class);
+                    myprofile.putExtra("user_id", "");
+                    startActivity(myprofile);
                 }
             });
 
@@ -191,5 +202,7 @@ public class Dashboard extends Fragment{
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+
 
 }

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:backgroundTint="#A5A5A5"
     android:outlineProvider="background"
-    tools:context="newpost.NewPost">
+    tools:context="com.example.wehelp.newpost.NewPost">
 
     <ImageView
         android:id="@+id/uploadedImageView"

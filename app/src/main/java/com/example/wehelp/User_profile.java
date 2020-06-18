@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.ServerError;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -45,10 +47,10 @@ public class User_profile extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private FirestoreRecyclerAdapter adapter;
-    private String user_id="", uemail;
+    private String user_id="", uemail="", ucontact="";
 
     //    widgets
-    private Button btn_edit_profile;
+    private Button btn_edit_profile,btn_call, brn_text, btn_email;
     private CircleImageView profile_image_view;
     private Uri mainImageURI = null;
     private TextView profile_username, profile_email, profile_contact, profile_address;
@@ -76,7 +78,7 @@ public class User_profile extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
-
+        getSupportActionBar().hide();
         //instantiation
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -87,6 +89,9 @@ public class User_profile extends AppCompatActivity {
         profile_image_view = findViewById(R.id.img_user_profile);
         posts_recycler = findViewById(R.id.profile_posts_lists);
         btn_edit_profile=findViewById(R.id.btn_profile_edit);
+        btn_call=findViewById(R.id.btn_profile_user_call);
+        brn_text=findViewById(R.id.btn_profile_user_text);
+        btn_email=findViewById(R.id.btn_profile_user_contact);
         //
         btn_edit_profile.setVisibility(View.GONE);
         user_id=getIntent().getStringExtra("user_id");
@@ -105,6 +110,10 @@ public class User_profile extends AppCompatActivity {
                         startActivity(editprofile);
                     }
                 });
+
+                btn_call.setEnabled(false);
+                brn_text.setEnabled(false);
+                btn_email.setEnabled(false);
             }
         }
         //query to view user details
@@ -127,6 +136,8 @@ public class User_profile extends AppCompatActivity {
                         profile_username.setText(fullname);
                         profile_email.setText(email);
                         profile_contact.setText(contact);
+                        uemail=email;
+                        ucontact=contact;
 
                     }
                 } else {
@@ -134,6 +145,62 @@ public class User_profile extends AppCompatActivity {
                     Toast.makeText(User_profile.this, "(User not found) : " + error, Toast.LENGTH_LONG).show();
                 }
 
+            }
+        });
+
+        //disable button if the contact  no. is null
+        if(ucontact.length()<0)
+        {
+            btn_call.setEnabled(false);
+            brn_text.setEnabled(false);
+        }
+        //call text email
+        btn_email.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Intent intent=new Intent(Intent.ACTION_SEND);
+                    String[] recipients={uemail};
+                    intent.putExtra(Intent.EXTRA_EMAIL, recipients);
+                    intent.putExtra(Intent.EXTRA_SUBJECT,"From WeHelp");
+                    intent.putExtra(Intent.EXTRA_TEXT,"");
+                    intent.setType("text/html");
+                    intent.setPackage("com.google.android.gm");
+                    startActivity(Intent.createChooser(intent, "Send mail"));
+                }
+                catch (SecurityException e)
+                {
+                    Toast.makeText(User_profile.this, "Unable to send email", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        btn_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri calluri= Uri.parse("tel:" + ucontact);
+                Intent i = new Intent(Intent.ACTION_DIAL, calluri);
+                try {
+                    startActivity(i);
+                }catch (SecurityException e)
+                {
+                    Toast.makeText(User_profile.this, "Unable to make call", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        brn_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri sms_uri = Uri.parse("smsto:"+ucontact);
+                Intent sms_intent = new Intent(Intent.ACTION_SENDTO, sms_uri);
+                sms_intent.putExtra("sms_body", "From WeHelp: ");
+                try {
+                    startActivity(sms_intent);
+                }catch (SecurityException e)
+                {
+                    Toast.makeText(User_profile.this, "Unable to send sms", Toast.LENGTH_LONG).show();
+                }
             }
         });
         final Query post_query = db.collection("user_posts").whereEqualTo("user_id", user_id).orderBy("date_added", Query.Direction.DESCENDING);

@@ -14,7 +14,6 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -67,15 +66,15 @@ public class SetupAccount extends AppCompatActivity {
     private FirebaseFirestore firebaseFirestore;
     private Date dob;
     //for progress dialog to be shown
-    private ProgressBar progressBar;
+    ProgressDialog pdialog = new ProgressDialog(SetupAccount.this);
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_setup_account);
         getSupportActionBar().setTitle("Edit Your Profile");
+//progress dialog
         btn_dob = findViewById(R.id.btn_dob);
         view_dob = findViewById(R.id.view_dob);
         contact_no_field = findViewById(R.id.acc_contact);
@@ -84,7 +83,6 @@ public class SetupAccount extends AppCompatActivity {
         btn_not_now = findViewById(R.id.btn_not_now);
         firstname_field = findViewById(R.id.acc_firstname);
         lastname_field = findViewById(R.id.acc_lastname);
-        progressBar=findViewById(R.id.progressBar2);
         userGender= findViewById(R.id.radioGroupGenderUser);
         male=findViewById(R.id.radio_male);
 
@@ -163,7 +161,6 @@ public class SetupAccount extends AppCompatActivity {
                         Picasso.with(SetupAccount.this).load(mainImageURI).fit()
                                 .placeholder(R.drawable.default_profile_img)
                                 .into(profile_image_view);
-                        progressBar.setVisibility(View.GONE);
                         String gender = document.getString("gender");
                         if(gender.toLowerCase().equals("male"))
                         {
@@ -278,7 +275,7 @@ public class SetupAccount extends AppCompatActivity {
             }
             else
             {
-                Toast.makeText(SetupAccount.this, "User must be 18+", Toast.LENGTH_LONG).show();
+               alertBox("ERROR: User must be 18+");
             }
            // tvAge.setText(Integer.toString(calculateAge(c.getTimeInMillis())));
         }
@@ -356,6 +353,7 @@ public class SetupAccount extends AppCompatActivity {
         if(task != null) {
             uploadedPhoto_url = task.getResult().toString();
         }
+            pdialog.showProgressDialog();
             Map <String , Object> obj = new HashMap<>();
             obj.put("contact",contact);
             obj.put("gender",genderVal.getText().toString());
@@ -367,7 +365,8 @@ public class SetupAccount extends AppCompatActivity {
             firebaseFirestore.collection("users").document(getAccount_id()).update(obj).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    progressBar.setVisibility(View.GONE );
+                    pdialog.dismissProgressDialog();
+                    Toast.makeText(SetupAccount.this,"Account Updated",Toast.LENGTH_LONG).show();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override

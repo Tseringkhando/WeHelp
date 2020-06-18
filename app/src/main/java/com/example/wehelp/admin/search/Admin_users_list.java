@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -33,7 +34,8 @@ public class Admin_users_list extends Fragment {
     private List<SearchUsersModel> alluserslists = new ArrayList<>();
     private RecyclerView search_res_adapter;
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-    private AdminUserAdapter userAdapter;
+    private AdminUserAdapter userAdapter = new AdminUserAdapter(alluserslists);
+    private SwipeRefreshLayout swipeUser;
 
     @Nullable
     @Override
@@ -41,6 +43,14 @@ public class Admin_users_list extends Fragment {
         View v = inflater.inflate(R.layout.activity_admin_users_list_adapter,container,false);
         userAdapter=new AdminUserAdapter();
         fillUsersDataFromDatabase();
+        swipeUser=v.findViewById(R.id.swipeUsers);
+        swipeUser.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                userAdapter.notifyDataSetChanged();
+                swipeUser.setRefreshing(false);
+            }
+        });
         search_res_adapter = v.findViewById(R.id.admin_users_adapter);
         searchView1= (SearchView)v.findViewById(R.id.adminSearchUsers);
         searchView1.setIconifiedByDefault(true);
@@ -95,6 +105,8 @@ public class Admin_users_list extends Fragment {
                         Boolean isAdmin = document.getBoolean("isAdmin");
                         alluserslists.add(new SearchUsersModel(uid, firstname, lastname, photo_url, contact, email, isAdmin, dob, datejoined));
                         userAdapter = new AdminUserAdapter(alluserslists);
+                        userAdapter.notifyDataSetChanged();
+
                     }
                     setUpRecyclerView();
                 } else {
