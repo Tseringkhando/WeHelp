@@ -99,16 +99,11 @@ public class SearchList extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 userAdapter.getFilter().filter(query);
-                return false;
-            }
-
+                return false;  }
             @Override
             public boolean onQueryTextChange(String newText) {
                 userAdapter.getFilter().filter(newText);
-                return false;
-            }
-        });
-
+                return false; }  });
         return true;
     }
 

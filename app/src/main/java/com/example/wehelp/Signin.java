@@ -52,38 +52,24 @@ public class Signin extends AppCompatActivity {
             public void onClick(View v) {
                 String email_id = email.getText().toString();
                 String loginPass = password.getText().toString();
-
                 if(!TextUtils.isEmpty(email_id) && !TextUtils.isEmpty(loginPass)){
                     //to show the progress bar while logging in into the app
                     progressBar.setVisibility(View.VISIBLE);
-
                     mAuth.signInWithEmailAndPassword(email_id, loginPass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-
                             if(task.isSuccessful()){
                                    if( mAuth.getCurrentUser().isEmailVerified())
-                                {
-                                    openUserMain();
-                                }
+                                { openUserMain();}
                                 else
-                                {
-                                    openDialog();
-                                }
-
+                                { openDialog();}
                             } else {
-
                                 String errorMessage = task.getException().getMessage();
                                 Toast.makeText(Signin.this, "Error : " + errorMessage, Toast.LENGTH_LONG).show();
-
-
                             }
-
                             progressBar.setVisibility(View.INVISIBLE);
-
                         }
                     });
-
                 }
                 //if the fields are empty
                 else

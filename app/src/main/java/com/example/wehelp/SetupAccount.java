@@ -53,7 +53,7 @@ public class SetupAccount extends AppCompatActivity {
     private TextView view_dob;
     private TextInputEditText contact_no_field, firstname_field, lastname_field;
     private RadioGroup userGender;
-    private RadioButton genderVal,male,female,others;
+    private RadioButton genderVal, male, female, others;
     private int genderId;
     private Boolean image_changed = false;
     private CircleImageView profile_image_view;
@@ -83,19 +83,19 @@ public class SetupAccount extends AppCompatActivity {
         btn_not_now = findViewById(R.id.btn_not_now);
         firstname_field = findViewById(R.id.acc_firstname);
         lastname_field = findViewById(R.id.acc_lastname);
-        userGender= findViewById(R.id.radioGroupGenderUser);
-        male=findViewById(R.id.radio_male);
+        userGender = findViewById(R.id.radioGroupGenderUser);
+        male = findViewById(R.id.radio_male);
 
-        female=findViewById(R.id.radio_female);
-        others=findViewById(R.id.radio_others);
-        genderId=userGender.getCheckedRadioButtonId();
-        genderVal=(RadioButton)findViewById(genderId);
+        female = findViewById(R.id.radio_female);
+        others = findViewById(R.id.radio_others);
+        genderId = userGender.getCheckedRadioButtonId();
+        genderVal = (RadioButton) findViewById(genderId);
         userGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                genderId=userGender.getCheckedRadioButtonId();
-                genderVal=(RadioButton)findViewById(genderId);
-                System.out.println(genderId + ", "+ genderVal.getText()+", ");
+                genderId = userGender.getCheckedRadioButtonId();
+                genderVal = (RadioButton) findViewById(genderId);
+                System.out.println(genderId + ", " + genderVal.getText() + ", ");
             }
         });
 
@@ -120,14 +120,14 @@ public class SetupAccount extends AppCompatActivity {
                 int mYear = c.get(Calendar.YEAR);
                 int mMonth = c.get(Calendar.MONTH);
                 int mDay = c.get(Calendar.DAY_OF_MONTH);
-                c.add( Calendar.YEAR, -100 ); // Subtract 100 years
+                c.add(Calendar.YEAR, -100); // Subtract 100 years
                 long minDate = c.getTime().getTime(); // Twice!
 
                 final Calendar cx = Calendar.getInstance();
                 int mYear2 = c.get(Calendar.YEAR);
                 int mMonth2 = c.get(Calendar.MONTH);
                 int mDay2 = c.get(Calendar.DAY_OF_MONTH);
-                cx.add( Calendar.YEAR, -18);
+                cx.add(Calendar.YEAR, -18);
                 long maxDate = cx.getTime().getTime();
                 DatePickerDialog dateDialog = new DatePickerDialog(SetupAccount.this, datePickerListener, mYear, mMonth, mDay);
                 dateDialog.getDatePicker().setMaxDate(maxDate);
@@ -155,23 +155,19 @@ public class SetupAccount extends AppCompatActivity {
                         setDob(dob_user);
 
                         String profile_image = document.getString("profile_image");
-                        uploadedPhoto_url= profile_image;
+                        uploadedPhoto_url = profile_image;
 
                         mainImageURI = Uri.parse(profile_image);
                         Picasso.with(SetupAccount.this).load(mainImageURI).fit()
                                 .placeholder(R.drawable.default_profile_img)
                                 .into(profile_image_view);
                         String gender = document.getString("gender");
-                        if(gender.toLowerCase().equals("male"))
-                        {
+                        if (gender.toLowerCase().equals("male")) {
 
-                        }
-                        else if(gender.toLowerCase().equals("female"))
-                        {
-                            
+                        } else if (gender.toLowerCase().equals("female")) {
 
-                        }
-                        else{
+
+                        } else {
                         }
                     }
                 } else {
@@ -196,52 +192,51 @@ public class SetupAccount extends AppCompatActivity {
         btn_save_account.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String phoneregex= "^\\+[0-9]{10,13}$";
-                String fname= firstname_field.getText().toString();
-                 String lasname= lastname_field.getText().toString();
-                 String contact=contact_no_field.getText().toString();
+                String phoneregex = "^\\+[0-9]{10,13}$";
+                String fname = firstname_field.getText().toString();
+                String lasname = lastname_field.getText().toString();
+                String contact = contact_no_field.getText().toString();
 
-                    if(fname.equals("") || lasname.equals(""))
-                    {alertBox("Enter full name");}
-                        else if(calculateAge(getDob().getTime())<18)
-                        { alertBox("ERROR: User must be 18+"); }
-
-                           else if(!contact.matches(phoneregex))
-                            { alertBox("ERROR:Invalid contact no.");}
-                                //if the user selects new profile picture, picture needs to be uploaded too
+                if (fname.equals("") || lasname.equals("")) {
+                    alertBox("Enter full name");
+                } else if (calculateAge(getDob().getTime()) < 18) {
+                    alertBox("ERROR: User must be 18+");
+                } else if (!contact.matches(phoneregex)) {
+                    alertBox("ERROR:Invalid contact no.");
+                }
+                //if the user selects new profile picture, picture needs to be uploaded too
                 else {
-                                if (getImage_changed()) {
-                                    //PHOTO UPLOAD
-                                    String imagename = UUID.randomUUID().toString() + "." + getExtension(mainImageURI);
-                                    final StorageReference imageRef = storageReference.child("user_profile_image/" + imagename);
+                    if (getImage_changed()) {
+                        //PHOTO UPLOAD
+                        String imagename = UUID.randomUUID().toString() + "." + getExtension(mainImageURI);
+                        final StorageReference imageRef = storageReference.child("user_profile_image/" + imagename);
 
-                                    UploadTask imageUpload = imageRef.putFile(mainImageURI);
-                                    imageUpload.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                                        @Override
-                                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                            if (!task.isSuccessful()) {
-                                                throw task.getException();
-                                            }
-                                            return imageRef.getDownloadUrl();
-                                        }
-                                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Uri> task) {
-                                            if (task.isSuccessful()) {
-                                                storeToDatabase(task, user_id, firstname_field.getText().toString(), lastname_field.getText().toString(), getDob(), contact_no_field.getText().toString());
-                                            }
-                                        }
-                                    });
-                                } else {
-                                    storeToDatabase(null, user_id, fname, lasname, getDob(), contact);
+                        UploadTask imageUpload = imageRef.putFile(mainImageURI);
+                        imageUpload.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                            @Override
+                            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                if (!task.isSuccessful()) {
+                                    throw task.getException();
+                                }
+                                return imageRef.getDownloadUrl();
+                            }
+                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if (task.isSuccessful()) {
+                                    storeToDatabase(task, user_id, firstname_field.getText().toString(), lastname_field.getText().toString(), getDob(), contact_no_field.getText().toString());
                                 }
                             }
-
+                        });
+                    } else {
+                        storeToDatabase(null, user_id, fname, lasname, getDob(), contact);
                     }
+                }
+
+            }
 
 
-
-            });
+        });
 
         //not now button
         btn_not_now.setOnClickListener(new View.OnClickListener() {
@@ -252,14 +247,15 @@ public class SetupAccount extends AppCompatActivity {
         });
     }
 
-        private void startCropImageActivity () {
-            CropImage.activity()
-                    .setGuidelines(CropImageView.Guidelines.ON)
-                    .setMinCropResultSize(512, 512)
-                    .setAspectRatio(1, 1)
-                    .start(SetupAccount.this);
+    private void startCropImageActivity() {
+        CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setMinCropResultSize(512, 512)
+                .setAspectRatio(1, 1)
+                .start(SetupAccount.this);
 
-        }
+    }
+
     private DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker datePicker, int year, int month, int day) {
@@ -267,28 +263,25 @@ public class SetupAccount extends AppCompatActivity {
             c.set(Calendar.YEAR, year);
             c.set(Calendar.MONTH, month);
             c.set(Calendar.DAY_OF_MONTH, day);
-            if(calculateAge(c.getTimeInMillis())>=18)
-            {
+            if (calculateAge(c.getTimeInMillis()) >= 18) {
                 String format = new SimpleDateFormat("MM/dd/yyyy").format(c.getTime());
                 setDob(c.getTime());
                 view_dob.setText(format);
+            } else {
+                alertBox("ERROR: User must be 18+");
             }
-            else
-            {
-               alertBox("ERROR: User must be 18+");
-            }
-           // tvAge.setText(Integer.toString(calculateAge(c.getTimeInMillis())));
+            // tvAge.setText(Integer.toString(calculateAge(c.getTimeInMillis())));
         }
     };
 
     //calculate age
     //http://www.deboma.com/article/mobile-development/5/android-datepicker-and-age-calculation/
-    private int calculateAge(long date){
+    private int calculateAge(long date) {
         Calendar dob = Calendar.getInstance();
         dob.setTimeInMillis(date);
         Calendar today = Calendar.getInstance();
         int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
-        if(today.get(Calendar.DAY_OF_MONTH) < dob.get(Calendar.DAY_OF_MONTH)){
+        if (today.get(Calendar.DAY_OF_MONTH) < dob.get(Calendar.DAY_OF_MONTH)) {
             age--;
         }
         return age;
@@ -296,42 +289,42 @@ public class SetupAccount extends AppCompatActivity {
 
     //DOb is private
 
-        public Date getDob () {
-            return dob;
-        }
+    public Date getDob() {
+        return dob;
+    }
 
-        public void setDob (Date dob){
-            this.dob = dob;
-        }
+    public void setDob(Date dob) {
+        this.dob = dob;
+    }
 
-        @Override
-        protected void onActivityResult ( int requestCode, int resultCode, Intent data){
-            super.onActivityResult(requestCode, resultCode, data);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-                CropImage.ActivityResult result = CropImage.getActivityResult(data);
-                if (resultCode == RESULT_OK) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
 
-                    mainImageURI = result.getUri();
-                    profile_image_view.setImageURI(mainImageURI);
-                    setImage_changed(true);
+                mainImageURI = result.getUri();
+                profile_image_view.setImageURI(mainImageURI);
+                setImage_changed(true);
 
-                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
 
-                    Exception error = result.getError();
+                Exception error = result.getError();
 
-                }
             }
-
         }
 
-        public Boolean getImage_changed () {
-            return image_changed;
-        }
+    }
 
-        public void setImage_changed (Boolean image_changed){
-            this.image_changed = image_changed;
-        }
+    public Boolean getImage_changed() {
+        return image_changed;
+    }
+
+    public void setImage_changed(Boolean image_changed) {
+        this.image_changed = image_changed;
+    }
 
 
     //TO GET THE EXTENSION OF IMAGE UPLOADED BY THE USER
@@ -340,7 +333,7 @@ public class SetupAccount extends AppCompatActivity {
             ContentResolver objContent = getContentResolver();
             MimeTypeMap objMime = MimeTypeMap.getSingleton();
             return objMime.getMimeTypeFromExtension(objContent.getType(uri));
-        }catch(Exception e){
+        } catch (Exception e) {
             Toast.makeText(SetupAccount.this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
         return "";
@@ -348,32 +341,31 @@ public class SetupAccount extends AppCompatActivity {
 
 
     //METHOD TO STORE THE DATA IN THE FIREBASE DATABASE
-    private  void storeToDatabase( Task<Uri> task,  String user_id, String fname, String lname, Date dob, String contact)
-    {
-        if(task != null) {
+    private void storeToDatabase(Task<Uri> task, String user_id, String fname, String lname, Date dob, String contact) {
+        if (task != null) {
             uploadedPhoto_url = task.getResult().toString();
         }
-            pdialog.showProgressDialog();
-            Map <String , Object> obj = new HashMap<>();
-            obj.put("contact",contact);
-            obj.put("gender",genderVal.getText().toString());
-            obj.put("dob",dob);
-            obj.put("firstname",fname);
-            obj.put("lastname",lname);
-            obj.put("profile_image",uploadedPhoto_url);
-                final String u = user_id;
-            firebaseFirestore.collection("users").document(getAccount_id()).update(obj).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    pdialog.dismissProgressDialog();
-                    Toast.makeText(SetupAccount.this,"Account Updated",Toast.LENGTH_LONG).show();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    System.out.println(e.getMessage());
-                }
-            });
+        pdialog.showProgressDialog();
+        Map<String, Object> obj = new HashMap<>();
+        obj.put("contact", contact);
+        obj.put("gender", genderVal.getText().toString());
+        obj.put("dob", dob);
+        obj.put("firstname", fname);
+        obj.put("lastname", lname);
+        obj.put("profile_image", uploadedPhoto_url);
+        final String u = user_id;
+        firebaseFirestore.collection("users").document(getAccount_id()).update(obj).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                pdialog.dismissProgressDialog();
+                Toast.makeText(SetupAccount.this, "Account Updated", Toast.LENGTH_LONG).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                System.out.println(e.getMessage());
+            }
+        });
     }
 
 

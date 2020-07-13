@@ -99,9 +99,6 @@ public class ChatBotMessage extends AppCompatActivity {
         inputMessage = findViewById(R.id.message);
         btnSend = findViewById(R.id.btn_send);
         btnRecord = findViewById(R.id.btn_record);
-//        String customFont = "Montserrat-Regular.ttf";
-//        Typeface typeface = Typeface.createFromAsset(getAssets(), customFont);
-//        inputMessage.setTypeface(typeface);
         recyclerView = findViewById(R.id.recycler_view);
 
         messageArrayList = new ArrayList<>();
@@ -241,9 +238,7 @@ inputMessage.addTextChangedListener(new TextWatcher() {
 
     // Sending a message to Watson Assistant Service
     private void sendMessage() {
-
         final String inputmessage = this.inputMessage.getText().toString().trim();
-
             if (!this.initialRequest) {
                 BotMessage inputMessage = new BotMessage();
                 inputMessage.setMessage(inputmessage);
@@ -255,9 +250,7 @@ inputMessage.addTextChangedListener(new TextWatcher() {
                 inputMessage.setId("100");
                 this.initialRequest = false;
                 Toast.makeText(getApplicationContext(), "Tap on the message for Voice", Toast.LENGTH_LONG).show();
-
             }
-
             this.inputMessage.setText("");
             mAdapter.notifyDataSetChanged();
 

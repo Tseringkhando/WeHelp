@@ -29,23 +29,21 @@ public class AdminDashboard extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
     private AppBarConfiguration mAppBarConfiguration;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth= FirebaseAuth.getInstance();
-        firestore=FirebaseFirestore.getInstance();
-        if(mAuth.getCurrentUser()==null)
-        {
+        mAuth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
+        if (mAuth.getCurrentUser() == null) {
             startActivity(new Intent(AdminDashboard.this, MainActivity.class));
-        }
-        else
-        {
+        } else {
             setContentView(R.layout.activity_admin_drawer);
             DrawerLayout drawer = findViewById(R.id.adminDrawer);
             NavigationView navigationView = findViewById(R.id.nav_admin_view);
             View nav = navigationView.getHeaderView(0);
             mAppBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.nav_dashboard, R.id.nav_admin_categories,R.id.nav_users,R.id.nav_admins,R.id.nav_add_admin)
+                    R.id.nav_dashboard, R.id.nav_admin_categories, R.id.nav_users, R.id.nav_admins, R.id.nav_add_admin)
                     .setDrawerLayout(drawer)
                     .build();
 
@@ -56,6 +54,7 @@ public class AdminDashboard extends AppCompatActivity {
         }
 
     }
+
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.admin_fragment);

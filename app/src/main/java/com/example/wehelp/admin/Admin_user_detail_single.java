@@ -43,30 +43,30 @@ import java.util.Locale;
 import java.util.Map;
 
 public class Admin_user_detail_single extends AppCompatActivity {
-    private TextView fname,lname, email, contact, gender, datejoined,dob;
+    private TextView fname, lname, email, contact, gender, datejoined, dob;
     private ImageView profileimage_view;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-    private String user_id="",accountId;
+    private String user_id = "", accountId;
     private Uri mainImageURI = null;
-    private Button btnDel,btnViewPosts,btnAddAdmin;
+    private Button btnDel, btnViewPosts, btnAddAdmin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_user_detail_single);
-        user_id=getIntent().getStringExtra("user_id");
-        fname= findViewById(R.id.fnameview);
-        lname=findViewById(R.id.lnameview);
-        email=findViewById(R.id.email_view);
-        gender=findViewById(R.id.gender_view);
-        dob=findViewById(R.id.dob_view);
-        datejoined=findViewById(R.id.datejoin_view);
-        contact=findViewById(R.id.contact_view);
-        profileimage_view=findViewById(R.id.profileimage_view);
-        btnDel=findViewById(R.id.btn_delete_user);
-        btnAddAdmin=findViewById(R.id.btnAddAsAdmin);
-        btnViewPosts=findViewById(R.id.btn_view_userposts);
+        user_id = getIntent().getStringExtra("user_id");
+        fname = findViewById(R.id.fnameview);
+        lname = findViewById(R.id.lnameview);
+        email = findViewById(R.id.email_view);
+        gender = findViewById(R.id.gender_view);
+        dob = findViewById(R.id.dob_view);
+        datejoined = findViewById(R.id.datejoin_view);
+        contact = findViewById(R.id.contact_view);
+        profileimage_view = findViewById(R.id.profileimage_view);
+        btnDel = findViewById(R.id.btn_delete_user);
+        btnAddAdmin = findViewById(R.id.btnAddAsAdmin);
+        btnViewPosts = findViewById(R.id.btn_view_userposts);
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
@@ -83,31 +83,30 @@ public class Admin_user_detail_single extends AppCompatActivity {
                         email.setText(document.getString("email"));
                         gender.setText(document.getString("gender"));
 
-                        Timestamp d= document.getTimestamp("dob");
+                        Timestamp d = document.getTimestamp("dob");
                         Timestamp dj = document.getTimestamp("datejoined");
-                        SimpleDateFormat dobformat= new SimpleDateFormat("dd MMM, yyyy");
+                        SimpleDateFormat dobformat = new SimpleDateFormat("dd MMM, yyyy");
                         SimpleDateFormat sfd = new SimpleDateFormat("dd MMM yyyy, HH:mm:ss");
                         Date dobdate = d.toDate();
                         Date djoined = dj.toDate();
                         dob.setText(dobformat.format(dobdate));
                         datejoined.setText(sfd.format(djoined));
                         String profile_image = document.getString("profile_image");
-                        if(profile_image.length()>0)
-                        {
+                        if (profile_image.length() > 0) {
                             mainImageURI = Uri.parse(profile_image);
                             Picasso.with(Admin_user_detail_single.this).load(mainImageURI).fit()
                                     .placeholder(R.drawable.default_profile_img)
                                     .into(profileimage_view);
                         }
 
-                        if(document.getBoolean("isAdmin")){
+                        if (document.getBoolean("isAdmin")) {
                             btnAddAdmin.setText("Remove Admin");
                             btnAddAdmin.setTextSize(14);
                             btnAddAdmin.setTextColor(Color.parseColor("#F44336"));
                             btnAddAdmin.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    final  Map<String, Object> user = new HashMap<>();
+                                    final Map<String, Object> user = new HashMap<>();
                                     user.put("isAdmin", false);
                                     AlertDialog.Builder builder = new AlertDialog.Builder(Admin_user_detail_single.this);
                                     builder.setTitle(R.string.app_name);
@@ -121,7 +120,7 @@ public class Admin_user_detail_single extends AppCompatActivity {
                                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
-                                                                    Toast.makeText(Admin_user_detail_single.this,"Admin removed",Toast.LENGTH_LONG).show();
+                                                                    Toast.makeText(Admin_user_detail_single.this, "Admin removed", Toast.LENGTH_LONG).show();
                                                                     finish();
                                                                 }
                                                             }).addOnFailureListener(new OnFailureListener() {
@@ -142,15 +141,13 @@ public class Admin_user_detail_single extends AppCompatActivity {
                                     alert.show();
                                 }
                             });
-                        }
-                        else
-                        {
+                        } else {
                             btnAddAdmin.setEnabled(true);
                             //set user as admin
                             btnAddAdmin.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    final  Map<String, Object> user = new HashMap<>();
+                                    final Map<String, Object> user = new HashMap<>();
                                     user.put("isAdmin", true);
                                     AlertDialog.Builder builder = new AlertDialog.Builder(Admin_user_detail_single.this);
                                     builder.setTitle(R.string.app_name);
@@ -164,16 +161,14 @@ public class Admin_user_detail_single extends AppCompatActivity {
                                                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<Void> task) {
-                                                                    Toast.makeText(Admin_user_detail_single.this,"Admin added",Toast.LENGTH_LONG).show();
+                                                                    Toast.makeText(Admin_user_detail_single.this, "Admin added", Toast.LENGTH_LONG).show();
                                                                     finish();
                                                                 }
                                                             }).addOnFailureListener(new OnFailureListener() {
                                                         @Override
                                                         public void onFailure(@NonNull Exception e) {
-
                                                         }
                                                     });
-
                                                 }
                                             })
                                             .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -202,13 +197,12 @@ public class Admin_user_detail_single extends AppCompatActivity {
         //delete user
         //to get the id of user in users table and delte the user
         final String[] userdbi = {""};
-        db.collection("users").whereEqualTo("user_id",user_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("users").whereEqualTo("user_id", user_id).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful())
-                {
+                if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        userdbi[0] =document.getId();
+                        userdbi[0] = document.getId();
                     }
                 }
             }
@@ -230,13 +224,13 @@ public class Admin_user_detail_single extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 finish();
-                                                Toast.makeText(Admin_user_detail_single.this,"User Deleted",Toast.LENGTH_LONG).show();
+                                                Toast.makeText(Admin_user_detail_single.this, "User Deleted", Toast.LENGTH_LONG).show();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
-                                                Toast.makeText(Admin_user_detail_single.this,"Error!!!",Toast.LENGTH_LONG).show();
+                                                Toast.makeText(Admin_user_detail_single.this, "Error!!!", Toast.LENGTH_LONG).show();
                                             }
                                         });
                             }
@@ -255,8 +249,8 @@ public class Admin_user_detail_single extends AppCompatActivity {
         btnViewPosts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent viewposts= new Intent(Admin_user_detail_single.this, AdminUserPosts.class);
-                viewposts.putExtra("userid",user_id);
+                Intent viewposts = new Intent(Admin_user_detail_single.this, AdminUserPosts.class);
+                viewposts.putExtra("userid", user_id);
                 startActivity(viewposts);
 
             }

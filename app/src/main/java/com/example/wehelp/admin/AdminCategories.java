@@ -49,11 +49,12 @@ import java.util.Map;
 public class AdminCategories extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
     public AdminCategories() {
     }
 
     //
-    private TextInputEditText newCat,newCatDesc;
+    private TextInputEditText newCat, newCatDesc;
     private Button btnAddnewCat;
     private RecyclerView adminCatAdapter;
     private String currentAdminId;
@@ -75,16 +76,16 @@ public class AdminCategories extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_categories, container, false);
-        adminCatAdapter=(RecyclerView) view.findViewById(R.id.adminlistCatRecycler);
-        newCat=view.findViewById(R.id.addNewCat);
-        newCatDesc=view.findViewById(R.id.newCatDesc);
-        btnAddnewCat=view.findViewById(R.id.btnAddCat);
-        mAuth=FirebaseAuth.getInstance();
-        firestore=FirebaseFirestore.getInstance();
-        currentAdminId=mAuth.getCurrentUser().getUid();
+        adminCatAdapter = (RecyclerView) view.findViewById(R.id.adminlistCatRecycler);
+        newCat = view.findViewById(R.id.addNewCat);
+        newCatDesc = view.findViewById(R.id.newCatDesc);
+        btnAddnewCat = view.findViewById(R.id.btnAddCat);
+        mAuth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
+        currentAdminId = mAuth.getCurrentUser().getUid();
         //list the categories
-        Query cat_query =firestore.collection("categories");
-        FirestoreRecyclerOptions<Categorylist_model> lists=
+        Query cat_query = firestore.collection("categories");
+        FirestoreRecyclerOptions<Categorylist_model> lists =
                 new FirestoreRecyclerOptions.Builder<Categorylist_model>()
                         .setQuery(cat_query, Categorylist_model.class).build();
 
@@ -111,13 +112,13 @@ public class AdminCategories extends Fragment {
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        Toast.makeText(getContext(),"Deleted",Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(getContext(), "Deleted", Toast.LENGTH_LONG).show();
                                                     }
                                                 })
                                                 .addOnFailureListener(new OnFailureListener() {
                                                     @Override
                                                     public void onFailure(@NonNull Exception e) {
-                                                        Toast.makeText(getContext(),"Error!!!",Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(getContext(), "Error!!!", Toast.LENGTH_LONG).show();
                                                     }
                                                 });
 
@@ -154,18 +155,15 @@ public class AdminCategories extends Fragment {
             public void onClick(View v) {
                 String cat = newCat.getText().toString();
                 String desc = newCatDesc.getText().toString();
-                if(cat.length()>0 && desc.length()>0 && currentAdminId.length()>0)
-                {
-                    saveCategory(cat,desc,currentAdminId);
-                }
-                else
-                {
-                    if(cat.length()<=0)
-                        Toast.makeText(getContext(),"Enter Category Title", Toast.LENGTH_LONG).show();
-                    else if (desc.length()<=0)
-                        Toast.makeText(getContext(),"Enter Category Description", Toast.LENGTH_LONG).show();
+                if (cat.length() > 0 && desc.length() > 0 && currentAdminId.length() > 0) {
+                    saveCategory(cat, desc, currentAdminId);
+                } else {
+                    if (cat.length() <= 0)
+                        Toast.makeText(getContext(), "Enter Category Title", Toast.LENGTH_LONG).show();
+                    else if (desc.length() <= 0)
+                        Toast.makeText(getContext(), "Enter Category Description", Toast.LENGTH_LONG).show();
                     else
-                        Toast.makeText(getContext(),"Unauthorised attempt", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Unauthorised attempt", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -180,17 +178,19 @@ public class AdminCategories extends Fragment {
         private TextView cat_name, cat_desc;
         private CardView cat_card;
         private Button btn_delete_category;
+
         public AdminCategoryViewHolder(@NonNull View itemView) {
             super(itemView);
 
             cat_name = itemView.findViewById(R.id.admin_cat_title);
-            cat_desc= itemView.findViewById(R.id.admin_cat_desc);
-            cat_card=itemView.findViewById(R.id.adminCatCard);
-            btn_delete_category=itemView.findViewById(R.id.btn_delete_category);
+            cat_desc = itemView.findViewById(R.id.admin_cat_desc);
+            cat_card = itemView.findViewById(R.id.adminCatCard);
+            btn_delete_category = itemView.findViewById(R.id.btn_delete_category);
 
         }
 
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -203,10 +203,10 @@ public class AdminCategories extends Fragment {
         super.onStop();
         adapter.stopListening();
     }
+
     //this inserts the data in the database
-    private void saveCategory(String cat, String desc, String user_id)
-    {
-          // Create a new user with a first and last name
+    private void saveCategory(String cat, String desc, String user_id) {
+        // Create a new user with a first and last name
         final Map<String, Object> newCatMap = new HashMap<>();
         newCatMap.put("category", cat);
         newCatMap.put("description", desc);
@@ -219,14 +219,11 @@ public class AdminCategories extends Fragment {
                 .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if(task.isSuccessful())
-                        {
-                        Toast.makeText(getContext(), "Category Added", Toast.LENGTH_LONG).show();
-                        newCat.setText("");
-                        newCatDesc.setText("");
-                            }
-                        else
-                        {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getContext(), "Category Added", Toast.LENGTH_LONG).show();
+                            newCat.setText("");
+                            newCatDesc.setText("");
+                        } else {
                             Toast.makeText(getContext(), "Category Not Added", Toast.LENGTH_LONG).show();
                         }
                     }

@@ -9,8 +9,6 @@ public class BotMessage implements Serializable {
     public BotMessage() {
         this.type = Type.TEXT;
     }
-
-
     public BotMessage(RuntimeResponseGeneric r) {
         this.message = "";
         this.title = r.title();
@@ -19,35 +17,27 @@ public class BotMessage implements Serializable {
         this.id = "2";
         this.type = Type.IMAGE;
     }
-
     public String getId() {
         return id;
     }
-
     public void setId(String id) {
         this.id = id;
     }
-
     public String getMessage() {
         return message;
     }
-
     public void setMessage(String message) {
         this.message = message;
     }
-
     public String getUrl() {
         return url;
     }
-
     public String getTitle() {
         return title;
     }
-
     public String getDescription() {
         return description;
     }
-
     public enum Type {
         TEXT,
         IMAGE

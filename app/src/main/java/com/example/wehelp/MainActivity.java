@@ -52,9 +52,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean getUserVerified(){return  this.isUserVerified;}
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mAuth= FirebaseAuth.getInstance();
-
         firestore=FirebaseFirestore.getInstance();
         if(mAuth.getCurrentUser()!=null)
         {
@@ -62,12 +60,13 @@ public class MainActivity extends AppCompatActivity {
             {
                 setUserVerified(true);
             }
-            firestore.collection("users").whereEqualTo("user_id",mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            firestore.collection("users").whereEqualTo("user_id",mAuth.getUid())
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if(task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            isUserAdmin=document.getBoolean("isAdmin");
+                               isUserAdmin=document.getBoolean("isAdmin");
                         }
                     }
                     if(isUserAdmin)
@@ -148,21 +147,14 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Uri gmmIntentUri = Uri.parse("geo:0,0?q=");
-//                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-//                mapIntent.setPackage("com.google.android.apps.maps");
-//                startActivity(mapIntent);
                 Intent chatbot = new Intent(MainActivity.this, ChatBotMessage.class);
-                startActivity(chatbot);
-
-
-            }
+                startActivity(chatbot);    }
         });
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_categories,R.id.nav_signout)
+                R.id.nav_home, R.id.nav_categories)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
