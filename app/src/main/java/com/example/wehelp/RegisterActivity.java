@@ -38,12 +38,11 @@ import java.util.Map;
 import java.util.TimeZone;
 
 public class RegisterActivity extends AppCompatActivity {
-
+    ProgressDialog p =new ProgressDialog(RegisterActivity.this);
     private TextInputEditText reg_email, reg_pass, confirm_pass, firstname, lastname;
     private Button regBtn, loginBtn, btn_reg_dob;
     private Date dob;
     private TextView view_reg_dob;
-    private ProgressBar regProgress;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private RadioGroup userGender;
@@ -59,7 +58,6 @@ public class RegisterActivity extends AppCompatActivity {
         reg_pass =findViewById(R.id.reg_password);
         confirm_pass = findViewById(R.id.reg_confirm_password);
         regBtn=findViewById(R.id.btn_register);
-        regProgress = findViewById(R.id.progressBar);
         firstname=findViewById(R.id.reg_fname);
         lastname=findViewById(R.id.reg_lname);
         btn_reg_dob= findViewById(R.id.btn_register_dob);
@@ -132,7 +130,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 if (calculateAge(getDob().getTime()) < 18) {
                                     Toast.makeText(RegisterActivity.this, "ERROR: User must be 18+", Toast.LENGTH_LONG).show();
                                 } else {
-                                    regProgress.setVisibility(View.VISIBLE);
+                                    p.showProgressDialog();
                                     mAuth.createUserWithEmailAndPassword(emailid, pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                         @Override
                                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -144,15 +142,17 @@ public class RegisterActivity extends AppCompatActivity {
                                                         if (task.isSuccessful()) {
                                                             createUserinDb(emailid, mAuth.getCurrentUser().getUid());
                                                         } else {
+                                                            p.dismissProgressDialog();
                                                             Toast.makeText(RegisterActivity.this, "Invalid email address", Toast.LENGTH_LONG).show();
                                                         }
                                                     }
                                                 });
                                             } else {
                                                 String errorMessage = task.getException().getMessage();
+                                                p.dismissProgressDialog();
                                                 Toast.makeText(RegisterActivity.this, "Error : " + errorMessage, Toast.LENGTH_LONG).show();
                                             }
-                                            regProgress.setVisibility(View.INVISIBLE);
+
                                         }
                                     });
                                 }
@@ -198,13 +198,12 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<DocumentReference> task) {
                         if(task.isSuccessful())
                         {
+                            p.dismissProgressDialog();
                             openDialog();
-
-                            regProgress.setVisibility(View.INVISIBLE);
                         }
                         else
                         {
-                            regProgress.setVisibility(View.VISIBLE);
+                            p.dismissProgressDialog();
                         }
                     }
                 });

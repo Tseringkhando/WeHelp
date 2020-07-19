@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 
+import com.example.wehelp.newpost.NewPost;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -20,10 +21,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class Signin extends AppCompatActivity {
-
+    SigninProcess p =new SigninProcess(Signin.this);
     private Button loginbtn , register, forgot;
     private TextInputEditText email, password;
-    private ProgressBar progressBar;
     private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,6 @@ public class Signin extends AppCompatActivity {
         password = findViewById(R.id.passwordlogin);
         loginbtn = findViewById(R.id.btn_login);
         register = findViewById(R.id.btn_register);
-        progressBar = findViewById(R.id.progressBar);
         //check if the user is loggedin or not
         if(mAuth.getCurrentUser()!=null && mAuth.getCurrentUser().isEmailVerified())
         {
@@ -54,7 +53,9 @@ public class Signin extends AppCompatActivity {
                 String loginPass = password.getText().toString();
                 if(!TextUtils.isEmpty(email_id) && !TextUtils.isEmpty(loginPass)){
                     //to show the progress bar while logging in into the app
-                    progressBar.setVisibility(View.VISIBLE);
+
+                    p.showProgressDialog();
+//                    https://firebase.google.com/docs/auth/android/firebaseui
                     mAuth.signInWithEmailAndPassword(email_id, loginPass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -67,7 +68,7 @@ public class Signin extends AppCompatActivity {
                                 String errorMessage = task.getException().getMessage();
                                 Toast.makeText(Signin.this, "Error : " + errorMessage, Toast.LENGTH_LONG).show();
                             }
-                            progressBar.setVisibility(View.INVISIBLE);
+                            p.dismissProgressDialog();
                         }
                     });
                 }

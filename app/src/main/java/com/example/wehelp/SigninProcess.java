@@ -1,15 +1,17 @@
 package com.example.wehelp;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.widget.TextView;
 
-public class ProgressDialog {
+public class SigninProcess {
     private Activity activity;
     private AlertDialog alert;
 
-    public ProgressDialog(Activity a){
+    public SigninProcess(Activity a){
         this.activity=a;
     }
 
@@ -18,7 +20,7 @@ public class ProgressDialog {
 
         AlertDialog.Builder builder= new AlertDialog.Builder(activity);
         LayoutInflater inflater =activity.getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.progressdialog, null));
+        builder.setView(inflater.inflate(R.layout.activity_signin_process, null));
         alert =builder.create();
         alert.show();
     }
@@ -27,6 +29,5 @@ public class ProgressDialog {
     {
         alert.dismiss();
     }
-
 
 }

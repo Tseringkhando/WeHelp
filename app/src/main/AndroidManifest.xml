@@ -17,7 +17,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <application
         android:allowBackup="true"
@@ -26,12 +26,13 @@
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".admin.AdminUserPosts"></activity>
+        <activity android:name=".SigninProcess"></activity>
+        <activity android:name=".admin.AdminUserPosts" />
         <activity
             android:name=".admin.Dashboard"
             android:label="@string/title_activity_dashboard"
             android:theme="@style/AppTheme.NoActionBar"
-            tools:ignore="Instantiatable"></activity>
+            tools:ignore="Instantiatable" />
         <activity android:name=".admin.AdminDrawer" />
         <activity android:name=".maps.MapPersmission" />
         <!--
@@ -71,7 +72,7 @@
         <activity android:name=".chatbot.ChatBotMessage" />
         <activity android:name=".User_profile" />
         <activity android:name=".categories.Category_post" />
-        <activity android:name="com.example.wehelp.newpost.NewPost" />
+        <activity android:name=".newpost.NewPost" />
         <activity android:name=".Posts_list" />
         <activity android:name=".SetupAccount" />
         <activity android:name=".RegisterActivity" />

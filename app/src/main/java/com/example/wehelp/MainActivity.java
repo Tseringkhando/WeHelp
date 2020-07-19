@@ -34,7 +34,6 @@ import com.squareup.picasso.Picasso;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.Menu;
@@ -42,7 +41,6 @@ import android.view.Menu;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
-   // private CircleImageView current_user_image;
     private AppBarConfiguration mAppBarConfiguration;
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
@@ -60,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             {
                 setUserVerified(true);
             }
+//            https://firebase.google.com/docs/auth/android/firebaseui
             firestore.collection("users").whereEqualTo("user_id",mAuth.getUid())
                     .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -93,9 +92,7 @@ public class MainActivity extends AppCompatActivity {
     public void callLayout()
     {
         setContentView(R.layout.activity_main);
-//        getSupportActionBar().hide();
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+
         swipeHome=findViewById(R.id.swipeHome);
         swipeHome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
